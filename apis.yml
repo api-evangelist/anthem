@@ -1,0 +1,7 @@
+aid: anthem
+url: https://raw.githubusercontent.com/api-evangelist/anthem/refs/heads/main/apis.yml
+modified: '2026-03-23'
+apis: []
+common:
+  - type: Website
+    url: https://www.anthem.com
