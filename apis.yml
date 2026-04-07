@@ -1,7 +1,12 @@
 aid: anthem
-url: https://raw.githubusercontent.com/api-evangelist/anthem/refs/heads/main/apis.yml
+url: 
+  https://raw.githubusercontent.com/api-evangelist/anthem/refs/heads/main/apis.yml
 modified: '2026-03-23'
 apis: []
 common:
   - type: Website
     url: https://www.anthem.com
+description: >-
+  Anthem is one of the largest health benefits companies in the United States, serving
+  members through affiliated Blue Cross and Blue Shield health plans across multiple
+  states.
