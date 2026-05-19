@@ -94,6 +94,8 @@ maintainers:
     X: apievangelist
     url: https://apievangelist.com
 common:
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/antheminc
   - type: Portal
     url: https://www.anthem.com
   - type: SignUp
