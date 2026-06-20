@@ -7,7 +7,7 @@ description: >-
   insurance, pharmacy benefits, and behavioral health services to over 40 million
   members. Under CMS interoperability rules (CMS-9115-F), Anthem offers FHIR-
   based Patient Access and Provider Directory APIs.
-image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 url: https://raw.githubusercontent.com/api-evangelist/anthem/refs/heads/main/apis.yml
 created: "2026-03-23"
 modified: "2026-04-19"
@@ -28,7 +28,7 @@ apis:
       Patient Access Final Rule (CMS-9115-F). Members can authorize third-party
       apps to access their claims, clinical information, formulary data, and
       coverage details. Implements SMART on FHIR for authorization.
-    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://www.anthem.com/developer/
     baseURL: https://fhir.anthem.com/r4/
     tags:
@@ -53,7 +53,7 @@ apis:
       directory information via HL7 FHIR R4, as required by CMS interoperability
       rules. Supports searching for in-network providers, facilities, and
       insurance plans. No authentication required for public directory access.
-    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://www.anthem.com/developer/
     baseURL: https://fhir.anthem.com/r4/
     tags:
@@ -74,7 +74,7 @@ apis:
       formulary data via HL7 FHIR R4, including covered medications, cost
       tiers, prior authorization requirements, and quantity limits for
       Anthem health plan formularies.
-    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://www.anthem.com/developer/
     baseURL: https://fhir.anthem.com/r4/
     tags:
