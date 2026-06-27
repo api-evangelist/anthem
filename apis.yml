@@ -99,7 +99,7 @@ common:
     url: https://www.linkedin.com/company/antheminc
   - type: Portal
     url: https://www.anthem.com
-  - type: SignUp
+  - type: Signup
     url: https://www.anthem.com/developer/register/
   - type: TermsOfService
     url: https://www.anthem.com/legal/terms-and-conditions/
