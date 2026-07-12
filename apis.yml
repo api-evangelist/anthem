@@ -95,6 +95,8 @@ maintainers:
     X: apievangelist
     url: https://apievangelist.com
 common:
+  - type: DomainSecurity
+    url: security/anthem-domain-security.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/antheminc
   - type: Portal
