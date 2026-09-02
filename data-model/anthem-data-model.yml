@@ -1,0 +1,269 @@
+generated: '2026-09-02'
+method: derived
+source: fhir/anthem-provider-directory-capability-statement.json, fhir/anthem-patient360-conformance-statement.json,
+  openapi/anthem-provider-directory-api-openapi.yml, openapi/anthem-drug-formulary-api-openapi.yml, https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+note: 'The entity model here is HL7 FHIR''s, not Anthem''s — every entity is a canonical FHIR resource bound to
+  an HL7 StructureDefinition in the servers'' own capability statements. That is the point worth recording: a consumer
+  who already speaks Da Vinci PDEX Plan Net needs no Anthem-specific data mapping. Relationships below are read
+  from the reference-typed search parameters each server declares (a declared search on PractitionerRole?organization=
+  is a declared edge), plus the _include chains Anthem documents in IO105 v15.0. Anthem publishes no object reference
+  of its own and no id-prefix scheme.'
+identifier_scheme:
+  style: FHIR logical id plus business identifier as [system]|[code]
+  systems_seen:
+  - http://terminology.hl7.org/CodeSystem/v2-0203
+  - http://hl7.org/fhir/us/davinci-pdex-plannet/CodeSystem/InsuranceProductTypeCS
+  - http://terminology.hl7.org/CodeSystem/v3-ActCode (DRUGPOL for drug coverage)
+  prefixes: null
+  prefixes_note: No vendor id prefixes; ids are opaque FHIR logical ids.
+domains:
+- name: Provider Directory
+  base: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd
+  profile: Da Vinci PDEX Plan Net 1.1.0
+  entities:
+  - HealthcareService
+  - InsurancePlan
+  - Location
+  - Organization
+  - OrganizationAffiliation
+  - Practitioner
+  - PractitionerRole
+  - Specimen
+- name: Drug Formulary
+  base: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/frmlry
+  profile: Da Vinci PDEX US Drug Formulary 2.0.1 STU2
+  entities:
+  - InsurancePlan
+  - Basic (FormularyItem)
+  - MedicationKnowledge (FormularyDrug)
+- name: Patient360 member FHIR
+  base: https://patient360c.anthem.com/P360Member/api/fhir
+  profile: FHIR DSTU2 1.0.2 / SMART on FHIR
+  entities:
+  - AllergyIntolerance
+  - AuditEvent
+  - Binary
+  - CarePlan
+  - Claim
+  - Condition
+  - Coverage
+  - Device
+  - DiagnosticOrder
+  - DiagnosticReport
+  - Encounter
+  - Goal
+  - Group
+  - Immunization
+  - Location
+  - MedicationAdministration
+  - MedicationDispense
+  - MedicationOrder
+  - MedicationStatement
+  - Observation
+  - OperationDefinition
+  - Organization
+  - Patient
+  - Person
+  - Practitioner
+  - Procedure
+  - ProcedureRequest
+  - Provenance
+  - ReferralRequest
+  - RelatedPerson
+  - Specimen
+  - ValueSet
+entities:
+- name: HealthcareService
+  profile: http://hl7.org/fhir/StructureDefinition/HealthcareService
+  interactions:
+  - search-type
+  - vread
+  - read
+  search_params:
+  - _id
+  - _lastUpdated
+  - location
+  - name
+  - organization
+  - service-category
+  - service-type
+  - specialty
+  domain: Provider Directory
+- name: InsurancePlan
+  profile: http://hl7.org/fhir/StructureDefinition/InsurancePlan
+  interactions:
+  - search-type
+  - vread
+  - read
+  search_params:
+  - _id
+  - _lastUpdated
+  - coverage-area
+  - identifier
+  - name
+  - type
+  domain: Provider Directory
+- name: Location
+  profile: http://hl7.org/fhir/StructureDefinition/Location
+  interactions:
+  - search-type
+  - vread
+  - read
+  search_params:
+  - _id
+  - _lastUpdated
+  - address
+  - address-city
+  - address-state
+  - address-postalcode
+  domain: Provider Directory
+- name: Organization
+  profile: http://hl7.org/fhir/StructureDefinition/Organization
+  interactions:
+  - search-type
+  - vread
+  - read
+  search_params:
+  - _id
+  - _lastUpdated
+  - address
+  - address-city
+  - address-state
+  - address-postalcode
+  - name
+  - type
+  domain: Provider Directory
+- name: OrganizationAffiliation
+  profile: http://hl7.org/fhir/StructureDefinition/OrganizationAffiliation
+  interactions:
+  - search-type
+  - vread
+  - read
+  search_params:
+  - _id
+  - _lastUpdated
+  - location
+  - network
+  - participating-organization
+  - primary-organization
+  - service
+  - specialty
+  - role
+  domain: Provider Directory
+- name: Practitioner
+  profile: http://hl7.org/fhir/StructureDefinition/Practitioner
+  interactions:
+  - search-type
+  - vread
+  - read
+  search_params:
+  - _id
+  - _lastUpdated
+  - family
+  - given
+  - name
+  domain: Provider Directory
+- name: PractitionerRole
+  profile: http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  interactions:
+  - search-type
+  - vread
+  - read
+  search_params:
+  - _id
+  - _lastUpdated
+  - location
+  - network
+  - organization
+  - practitioner
+  - service
+  - specialty
+  - role
+  domain: Provider Directory
+- name: Specimen
+  profile: http://hl7.org/fhir/StructureDefinition/Specimen
+  interactions:
+  - search-type
+  - vread
+  - read
+  - history-instance
+  search_params:
+  - _id
+  - _lastUpdated
+  - _source
+  - patient
+  domain: Provider Directory
+relationships:
+- from: PractitionerRole
+  to: Practitioner
+  type: belongs_to
+  via: practitioner
+  note: A PractitionerRole binds one practitioner to one organization, location, network and service.
+- from: PractitionerRole
+  to: Organization
+  type: belongs_to
+  via: organization
+- from: PractitionerRole
+  to: Location
+  type: has_many
+  via: location
+- from: PractitionerRole
+  to: HealthcareService
+  type: has_many
+  via: service
+- from: PractitionerRole
+  to: Organization
+  type: belongs_to
+  via: network
+  note: network is an Organization playing the payer-network role.
+- from: OrganizationAffiliation
+  to: Organization
+  type: belongs_to
+  via: primary-organization
+- from: OrganizationAffiliation
+  to: Organization
+  type: has_many
+  via: participating-organization
+- from: OrganizationAffiliation
+  to: Location
+  type: has_many
+  via: location
+- from: OrganizationAffiliation
+  to: HealthcareService
+  type: has_many
+  via: service
+- from: OrganizationAffiliation
+  to: Organization
+  type: has_many
+  via: network
+- from: HealthcareService
+  to: Organization
+  type: belongs_to
+  via: organization
+- from: HealthcareService
+  to: Location
+  type: has_many
+  via: location
+- from: InsurancePlan
+  to: Location
+  type: has_many
+  via: coverage-area
+  note: Coverage area is searched by 2-digit state abbreviation per Anthem docs.
+- from: InsurancePlan
+  to: Organization
+  type: belongs_to
+  via: administeredBy
+- from: Basic
+  to: InsurancePlan
+  type: belongs_to
+  via: formulary
+  note: FormularyItem points at the formulary InsurancePlan it belongs to.
+- from: Basic
+  to: MedicationKnowledge
+  type: belongs_to
+  via: subject
+  note: FormularyItem subject is the FormularyDrug.
+counts:
+  provider_directory_entities: 8
+  patient360_entities: 32
+  relationships: 16

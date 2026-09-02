@@ -1,0 +1,132 @@
+generated: '2026-09-02'
+method: searched
+source: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+docs: https://www.anthem.com/developers
+note: >-
+  Anthem's APIs exist because CMS required them, so the standards below are not marketing claims — they are
+  named in Anthem's own Interoperability API Endpoint Support Document (IO105 v15.0, effective 2025-11-18)
+  and, where marked probed, they are declared by the FHIR servers themselves in a live capability statement.
+domain: healthcare-payer
+domain_standard: HL7 FHIR
+domain_standard_evidence: >-
+  The contract IS a FHIR contract, not a REST API that mentions FHIR. Two live servers publish FHIR
+  conformance resources of their own accord: the Provider Directory server returns a FHIR R4
+  CapabilityStatement (fhirVersion 4.0.1, publisher "Elevance Health, Inc") at
+  /resources/unregistered/api/v1/fhir/cms_mandate/mcd/metadata, and the Patient360 member server returns a
+  FHIR DSTU2 Conformance resource (fhirVersion 1.0.2) at /P360Member/api/fhir/metadata carrying the SMART
+  security service coding http://hl7.org/fhir/restful-security-service#SMART-on-FHIR. Resource profiles are
+  bound to canonical HL7 StructureDefinitions.
+conformance:
+  - id: hl7-fhir-r4
+    name: HL7 FHIR Release 4 (4.0.1)
+    conforms: true
+    method: probed
+    evidence: >-
+      CapabilityStatement.fhirVersion = "4.0.1" at
+      https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd/metadata
+      (HTTP 200, 2026-09-02); also stated for the Patient Access and Formulary APIs in IO105 v15.0.
+  - id: hl7-fhir-dstu2
+    name: HL7 FHIR DSTU2 (1.0.2)
+    conforms: true
+    method: probed
+    evidence: >-
+      Conformance.fhirVersion = "1.0.2" at https://patient360c.anthem.com/P360Member/api/fhir/metadata
+      (HTTP 200, 2026-09-02). NOTE: this is a superseded FHIR version still serving live member data,
+      running alongside the R4 CMS-mandate surface.
+  - id: smart-on-fhir
+    name: SMART Application Launch Framework 2.2.0
+    conforms: true
+    method: probed
+    evidence: >-
+      IO105 v15.0 names SMART App Launch IG Release 2.2.0 for the Patient Access API. The Patient360 server
+      independently declares SMART-on-FHIR in Conformance.rest.security.service and publishes the
+      oauth-uris extension (authorize / token / introspect), and its identity server serves an OpenID
+      Connect discovery document with 1,048 SMART scopes.
+  - id: carin-blue-button
+    name: CARIN Consumer Directed Payer Data Exchange (CARIN IG for Blue Button) STU 2.1.0
+    conforms: true
+    method: searched
+    evidence: 'IO105 v15.0, "PATIENT ACCESS API" section: the Patient Access API adheres to CARIN IG for Blue Button STU 2.1.0.'
+  - id: us-core-610
+    name: HL7 FHIR US Core Implementation Guide 6.1.0
+    conforms: true
+    method: searched
+    evidence: 'IO105 v15.0, "PATIENT ACCESS API" section.'
+  - id: us-core-311
+    name: HL7 FHIR US Core Implementation Guide STU 3.1.1
+    conforms: true
+    method: searched
+    evidence: 'IO105 v15.0, "PROVIDER DIRECTORY API" section, for the Plan-Net Location, Organization and Practitioner profiles.'
+  - id: davinci-pdex-plan-net
+    name: Da Vinci PDEX Plan Net 1.1.0
+    conforms: true
+    method: probed
+    evidence: >-
+      IO105 v15.0 names Plan Net 1.1.0 for the Provider Directory API; the live CapabilityStatement exposes
+      exactly the Plan-Net resource set (Practitioner, PractitionerRole, Organization,
+      OrganizationAffiliation, Location, HealthcareService, InsurancePlan).
+  - id: davinci-pdex-us-drug-formulary
+    name: Da Vinci PDEX US Drug Formulary IG 2.0.1 STU2
+    conforms: true
+    method: searched
+    evidence: >-
+      IO105 v15.0, "FORMULARY API" section; the documented resource set (InsurancePlan, Basic as
+      FormularyItem, MedicationKnowledge as FormularyDrug) is the Formulary IG's.
+  - id: oauth2
+    name: OAuth 2.0
+    conforms: true
+    method: probed
+    evidence: >-
+      Authorization-code with PKCE (S256) on the Patient360 identity server; client-credentials on the
+      CMS-mandate platform per IO105 v15.0.
+  - id: oidc
+    name: OpenID Connect Discovery 1.0
+    conforms: true
+    method: probed
+    evidence: >-
+      https://patient360c.anthem.com/P360Member/identityserver/.well-known/openid-configuration returns
+      HTTP 200 with issuer, jwks_uri, authorization_endpoint, token_endpoint, userinfo_endpoint and
+      claims_supported.
+  - id: cms-9115-f
+    name: CMS Interoperability and Patient Access Final Rule (CMS-9115-F)
+    conforms: true
+    method: searched
+    evidence: >-
+      IO105 v15.0 "POLICY" section states the APIs exist to satisfy CMS-9115-F; compliance is overseen by
+      Anthem's Interoperability Center of Excellence (IO CoE).
+  - id: cms-0057-f
+    name: CMS Interoperability and Prior Authorization Final Rule (CMS-0057-F)
+    conforms: false
+    method: searched
+    evidence: >-
+      NOT YET. IO105 v15.0 commits the Payer-to-Payer API, Prior Authorization API and Provider Access API
+      to be implemented by 1/1/27, and prior-authorization data to be added to the Patient Access API by
+      1/1/27. As of 2026-09-02 none of the three is published.
+  - id: rfc9457
+    name: RFC 9457 Problem Details for HTTP APIs
+    conforms: false
+    method: probed
+    evidence: >-
+      Errors on the CMS-mandate platform return a bespoke JSON envelope
+      {status_code, status, error, error_description} with content-type application/json — neither
+      application/problem+json nor a FHIR OperationOutcome.
+  - id: hipaa
+    name: HIPAA / HITECH
+    conforms: true
+    method: searched
+    evidence: >-
+      Anthem is a covered entity under HIPAA and states its privacy and disclosure practices at
+      https://www.anthem.com/privacy (HTTP 200). No third-party certification report (SOC 2, HITRUST,
+      ISO 27001) is published on a public trust center; probe-security-programs found none.
+  - id: pagination
+    name: Cursor/link pagination
+    conforms: true
+    method: derived
+    evidence: 'FHIR Bundle.link next paging; the Patient360 server additionally declares a getPage operation.'
+  - id: idempotency
+    name: Idempotency keys
+    conforms: false
+    method: derived
+    evidence: >-
+      Not applicable in practice — the published API surface is read-only (GET search / read / vread), so
+      there is no unsafe write to key. No Idempotency-Key header is documented anywhere.

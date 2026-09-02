@@ -1,0 +1,447 @@
+openapi: 3.1.0
+info:
+  title: Anthem Drug Formulary FHIR API
+  version: 1.0.0
+  description: 'Anthem''s CMS-mandated Drug Formulary API, delivered as HL7 FHIR R4 and conforming to the Da Vinci
+    Payer Data Exchange (PDEX) US Drug Formulary Implementation Guide 2.0.1 STU2. Publishes formularies attached
+    to Anthem Medicare, Medicaid and CHIP insurance plans, the drug lists under each formulary, cost-sharing, drug
+    tier and pharmacy-type data.
+
+
+    DERIVED from Anthem''s own Interoperability API Endpoint Support Document (IO105 v15.0, effective 2025-11-18),
+    published at https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+    — the base URL, the resource set and every search parameter below are Anthem''s; the OpenAPI structure and the
+    operationIds are the API Evangelist pipeline''s. The server''s own /metadata could not be read to confirm: it
+    returned HTTP 403 anonymously when probed on 2026-09-02.'
+  contact:
+    name: Anthem Interoperability Workgroup
+    email: interoperabilityworkgroup@anthem.com
+    url: https://www.anthem.com/developers
+  x-derived-from: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+  x-derived-method: derived
+servers:
+- url: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/frmlry
+  description: Formulary production FHIR base (registration required; OAuth 2.0 client credentials)
+security:
+- bearerAuth: []
+tags:
+- name: InsurancePlan
+  description: PayerInsurancePlan and Formulary resources
+- name: Basic
+  description: FormularyItem, carried on the FHIR Basic resource
+- name: MedicationKnowledge
+  description: FormularyDrug resources
+- name: Conformance
+  description: Server capability statement
+paths:
+  /metadata:
+    get:
+      summary: Retrieve the FHIR CapabilityStatement for the Formulary server
+      description: 'Server CapabilityStatement. PROBED 2026-09-02: this path returned HTTP 403 anonymously, unlike
+        the Provider Directory server whose /metadata is public.'
+      operationId: getFormularyCapabilityStatement
+      tags:
+      - Conformance
+      responses:
+        '200':
+          description: CapabilityStatement resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: CapabilityStatement
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /InsurancePlan:
+    get:
+      summary: Search InsurancePlan resources (PayerInsurancePlan & Formulary)
+      description: Search Anthem formulary data expressed as FHIR InsurancePlan (PayerInsurancePlan & Formulary).
+        Conforms to the Da Vinci Payer Data Exchange (PDEX) US Drug Formulary IG 2.0.1 STU2. Covers Medicare, Medicaid
+        and CHIP plans.
+      operationId: searchFormularyInsurancePlan
+      tags:
+      - InsurancePlan
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: period
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: coverage-type
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: formularycoverage
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: coverage-area
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of InsurancePlan resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /InsurancePlan/{id}:
+    get:
+      summary: Read a InsurancePlan by id
+      description: Read a single InsurancePlan resource by its logical id.
+      operationId: readFormularyInsurancePlan
+      tags:
+      - InsurancePlan
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the InsurancePlan resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: InsurancePlan resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: InsurancePlan
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /Basic:
+    get:
+      summary: Search Basic resources (FormularyItem (carried on the FHIR Basic resource))
+      description: Search Anthem formulary data expressed as FHIR Basic (FormularyItem (carried on the FHIR Basic
+        resource)). Conforms to the Da Vinci Payer Data Exchange (PDEX) US Drug Formulary IG 2.0.1 STU2. Covers
+        Medicare, Medicaid and CHIP plans.
+      operationId: searchFormularyBasic
+      tags:
+      - Basic
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: period
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: formulary
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: pharmacy-benefit-type
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: drug-tier
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of Basic resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /Basic/{id}:
+    get:
+      summary: Read a Basic by id
+      description: Read a single Basic resource by its logical id.
+      operationId: readFormularyBasic
+      tags:
+      - Basic
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Basic resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Basic resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: Basic
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /MedicationKnowledge:
+    get:
+      summary: Search MedicationKnowledge resources (FormularyDrug)
+      description: Search Anthem formulary data expressed as FHIR MedicationKnowledge (FormularyDrug). Conforms
+        to the Da Vinci Payer Data Exchange (PDEX) US Drug Formulary IG 2.0.1 STU2. Covers Medicare, Medicaid and
+        CHIP plans.
+      operationId: searchFormularyMedicationKnowledge
+      tags:
+      - MedicationKnowledge
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      - name: drug-name
+        in: query
+        required: false
+        description: FHIR search parameter documented in the Anthem Interoperability API Endpoint Support Document
+          (IO105 v15.0) "Covered API Searches" table.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of MedicationKnowledge resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /MedicationKnowledge/{id}:
+    get:
+      summary: Read a MedicationKnowledge by id
+      description: Read a single MedicationKnowledge resource by its logical id.
+      operationId: readFormularyMedicationKnowledge
+      tags:
+      - MedicationKnowledge
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the MedicationKnowledge resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: MedicationKnowledge resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: MedicationKnowledge
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 client-credentials access token. Client id, client secret and the token endpoint URL
+        are issued by Anthem over secure email once the Formulary API Production Environment request form is approved.
+  schemas:
+    Bundle:
+      type: object
+      title: FHIR Bundle
+      description: FHIR R4 Bundle. See http://hl7.org/fhir/R4/bundle.html
+      properties:
+        resourceType:
+          type: string
+        type:
+          type: string
+        total:
+          type: integer
+        link:
+          type: array
+          items:
+            type: object
+        entry:
+          type: array
+          items:
+            type: object
+    ErrorEnvelope:
+      type: object
+      title: Anthem gateway error envelope
+      description: Non-FHIR JSON error body observed from this platform on 2026-09-02.
+      properties:
+        status_code:
+          type: integer
+        status:
+          type: string
+        error:
+          type: string
+        error_description:
+          type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    Forbidden:
+      description: 'Forbidden. PROBED 2026-09-02: anonymous requests to this base, including /metadata, return HTTP
+        403 with an empty body.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'

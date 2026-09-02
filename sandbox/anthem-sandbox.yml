@@ -1,0 +1,56 @@
+generated: '2026-09-02'
+method: searched
+source: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+docs: https://www.anthem.com/developers
+note: >-
+  Anthem publishes a real Patient Access sandbox — a public FHIR functional-testing environment carrying
+  SYNTHETIC data, open to any application developer on self-registration, supporting the full HL7 FHIR
+  standard with SMART authorization and its own SMART client registration. It is the only self-serve entry
+  point Anthem offers: production access to any of the three APIs requires an approval form that "can take
+  several weeks". What Anthem does NOT publish is the sandbox's base URL, its test member identifiers, or
+  any fixture values — IO105 v15.0 links those pages rather than printing them, so nothing below is a
+  guessed host or a made-up test identity.
+environments:
+  - name: Patient Access API — Sandbox
+    kind: sandbox
+    data: synthetic
+    public: true
+    access: developer self-registration
+    capabilities:
+      - HL7 FHIR functional testing
+      - SMART on FHIR authorization
+      - SMART client registration and maintenance
+    base_url: null
+    base_url_note: >-
+      Not printed in the endpoint support document; IO105 v15.0 links "here" to the sandbox registration and
+      SMART client pages instead of naming a host. Recorded as null rather than guessed.
+  - name: Patient Access API — Production
+    kind: production
+    data: live member data
+    public: false
+    access: >-
+      Patient Access API Production Environment request form on the developer portal, plus member consent.
+      A token is issued valid for 90 days; continued access requires renewed consent.
+    request_url: https://www.anthem.com/developers/request-anthem-io
+  - name: Provider Directory API — Production
+    kind: production
+    data: live network provider data
+    public: >-
+      Documented as public but registration-gated; credentials arrive by secure email after form approval.
+    request_url: https://www.anthem.com/developers/provider-directory-api-request
+    base_url: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd/
+  - name: Formulary API — Production
+    kind: production
+    data: live Medicare, Medicaid and CHIP formulary data
+    public: >-
+      Documented as public but registration-gated; credentials arrive by secure email after form approval.
+    base_url: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/frmlry
+test_values: []
+test_values_note: >-
+  Anthem publishes no test member ids, no synthetic patient identifiers and no fixture bundles in any public
+  document. Nothing is invented here.
+onboarding_friction:
+  self_serve_sandbox: true
+  self_serve_production: false
+  production_lead_time: 'several weeks (Anthem''s own wording)'
+  credential_delivery: secure email

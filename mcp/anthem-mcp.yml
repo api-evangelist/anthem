@@ -1,0 +1,57 @@
+generated: '2026-09-02'
+method: derived
+source: openapi/anthem-provider-directory-api-openapi.yml
+status: candidate
+note: >-
+  Anthem ships no MCP server. No hosted endpoint, no stdio package, no mention of MCP or agents anywhere on
+  the developer portal, in IO105 v15.0, on npm, on PyPI or in github.com/openanthem. The tools below are a
+  CANDIDATE set the pipeline derived from the one machine-readable contract Anthem does publish — the live
+  Provider Directory CapabilityStatement — to show what an Anthem MCP server would expose if one existed.
+  Nothing here is callable today.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: derived
+  note: >-
+    mode none. Searched the developer portal, the endpoint support document, npm, PyPI and the openanthem
+    GitHub org on 2026-09-02; no MCP surface of any kind exists. No endpoint URL is guessed here.
+server:
+  name: anthem-provider-directory
+  description: Candidate MCP tool surface over Anthem's public FHIR Provider Directory API.
+  transport: null
+tools:
+  - name: search_practitioners
+    description: Find in-network practitioners by name, family name or given name.
+    rest: [searchPractitioner]
+    inputSchema_source: openapi/anthem-provider-directory-api-openapi.yml#/paths/~1Practitioner/get
+  - name: search_practitioner_roles
+    description: Find the roles a practitioner holds — which organization, location, network and service.
+    rest: [searchPractitionerRole]
+  - name: search_organizations
+    description: Find network organizations by name, type, address, city, state or postal code.
+    rest: [searchOrganization]
+  - name: search_locations
+    description: Find care locations by name, address, city, state or postal code.
+    rest: [searchLocation]
+  - name: search_healthcare_services
+    description: Find healthcare services by specialty, service type, category, organization or location.
+    rest: [searchHealthcareService]
+  - name: search_insurance_plans
+    description: Find Anthem insurance plans by name, identifier, type or coverage area.
+    rest: [searchInsurancePlan]
+  - name: search_organization_affiliations
+    description: Find affiliations between organizations, networks, locations and services.
+    rest: [searchOrganizationAffiliation]
+  - name: get_capability_statement
+    description: Read the server's FHIR CapabilityStatement — the only anonymously callable operation.
+    rest: [getCapabilityStatement]
+blockers:
+  - >-
+    Even if a server were built, the upstream API returns HTTP 500 for every unauthenticated request rather
+    than 401, so an agent could not tell a credential problem from an outage. See
+    errors/anthem-problem-types.yml.
+  - >-
+    Credentials are issued only by secure email after a human-reviewed form, so no agent can self-onboard.

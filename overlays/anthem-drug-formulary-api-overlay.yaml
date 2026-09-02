@@ -1,0 +1,32 @@
+overlay: 1.0.0
+info:
+  title: Anthem Drug Formulary API — API Evangelist enhancements
+  version: 1.0.0
+extends: openapi/anthem-drug-formulary-api-openapi.yml
+x-generated: '2026-09-02'
+x-method: generated
+x-source: Enhancements over the contract derived from Anthem's IO105 v15.0 endpoint support document.
+actions:
+  - target: $.info
+    update:
+      x-provider: Anthem (Elevance Health)
+      x-regulatory-basis: CMS Interoperability and Patient Access Final Rule (CMS-9115-F)
+      x-implementation-guides:
+        - Da Vinci Payer Data Exchange (PDEX) US Drug Formulary IG 2.0.1 STU2
+      x-plan-scope: Medicare, Medicaid and CHIP plans only
+      x-contract-confidence: >-
+        Derived from Anthem's published search-parameter tables, NOT from a live capability statement — the
+        server returned HTTP 403 to an anonymous /metadata request on 2026-09-02, so the operation set could
+        not be confirmed against the server itself.
+  - target: $.paths['/InsurancePlan'].get
+    update:
+      x-anticipated-queries:
+        - 'InsurancePlan?type=http://terminology.hl7.org/CodeSystem/v3ActCode|DRUGPOL'
+        - 'InsurancePlan?type=http://terminology.hl7.org/CodeSystem/v3ActCode|DRUGPOL&identifier=D1002'
+        - 'InsurancePlan?formularycoverage=InsurancePlan/FormularyD1002'
+  - target: $.paths['/Basic'].get
+    update:
+      x-resource-meaning: FormularyItem, carried on the FHIR Basic resource with code=formulary-item.
+  - target: $.paths['/MedicationKnowledge'].get
+    update:
+      x-resource-meaning: FormularyDrug.

@@ -1,0 +1,140 @@
+generated: '2026-09-02'
+method: probed
+source: live GET probes of every /.well-known/ path in the pipeline's named list, on every Anthem/Elevance API and portal host
+note: >-
+  No Anthem or Elevance Health host serves a /.well-known/ document at its ROOT — security.txt, api-catalog,
+  openid-configuration, oauth-authorization-server, oauth-protected-resource, ai-plugin.json, ucp.json,
+  acp.json, aauth-resource.json and both agent-card paths all miss on www.anthem.com,
+  totalview.healthos.elevancehealth.com, patient360c.anthem.com and patient360.anthem.com. The one real
+  discovery document Anthem publishes sits one path segment down, under the Patient360 identity server:
+  /P360Member/identityserver/.well-known/openid-configuration returns a complete OpenID Connect / SMART
+  discovery document declaring 1,048 scopes, and its companion /.well-known/jwks returns the signing keys.
+  Both were saved verbatim. www.elevancehealth.com answers 301 or 403 to every path behind an edge policy
+  and could not be read; those rows record what was actually observed, not an absence.
+hosts:
+  - host: patient360c.anthem.com
+    documents:
+      - path: /P360Member/identityserver/.well-known/openid-configuration
+        status: 200
+        content_type: application/json
+        file: anthem-openid-configuration.json
+        note: >-
+          Real OpenID Connect / SMART discovery document for the Anthem Patient360 member FHIR server.
+          issuer https://patient360.anthem.com/P360Member/identityserver; 1,048 scopes_supported.
+      - path: /P360Member/identityserver/.well-known/jwks
+        status: 200
+        content_type: application/json
+        file: anthem-jwks.json
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+      - path: /.well-known/ucp.json
+        status: 404
+      - path: /.well-known/acp.json
+        status: 404
+  - host: www.anthem.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+      - path: /.well-known/ucp.json
+        status: 404
+      - path: /.well-known/acp.json
+        status: 404
+  - host: totalview.healthos.elevancehealth.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/smart-configuration
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+      - path: /.well-known/ucp.json
+        status: 404
+      - path: /.well-known/acp.json
+        status: 404
+  - host: patient360.anthem.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+  - host: www.elevancehealth.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 301
+        note: edge redirect; document not readable
+      - path: /.well-known/openid-configuration
+        status: 301
+      - path: /.well-known/oauth-authorization-server
+        status: 301
+      - path: /.well-known/oauth-protected-resource
+        status: 301
+      - path: /.well-known/api-catalog
+        status: 301
+      - path: /.well-known/ai-plugin.json
+        status: 403
+      - path: /.well-known/agent-card.json
+        status: 403
+      - path: /.well-known/agent.json
+        status: 403
+      - path: /.well-known/aauth-resource.json
+        status: 403

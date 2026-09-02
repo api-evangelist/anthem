@@ -1,0 +1,151 @@
+generated: '2026-09-02'
+method: derived
+source: >-
+  openapi/anthem-provider-directory-api-openapi.yml, openapi/anthem-drug-formulary-api-openapi.yml,
+  openapi/anthem-patient360-member-fhir-api-openapi.yml, fhir/anthem-provider-directory-capability-statement.json,
+  fhir/anthem-patient360-conformance-statement.json,
+  https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+docs: https://www.anthem.com/developers
+note: >-
+  Anthem publishes no API style guide of its own; every convention below is either HL7 FHIR's (which the
+  contract inherits by being a FHIR contract) or was observed live on 2026-09-02. Where the two disagree —
+  and on errors they badly do — the observed behaviour is recorded, because that is what a client will meet.
+authentication:
+  style: >-
+    Bearer token in the Authorization header. Two issuers: SMART on FHIR authorization_code for the
+    Patient360 member server, OAuth 2.0 client_credentials for the CMS-mandate platform.
+  header: 'Authorization: Bearer <token>'
+  see: authentication/anthem-authentication.yml
+  scopes: scopes/anthem-scopes.yml
+content_negotiation:
+  request: 'Accept: application/fhir+json (R4) or application/json+fhir (DSTU2)'
+  format_parameter: '_format=json | _format=xml'
+  observed:
+    - 'patient360c.anthem.com serves application/xml+fhir by default and application/json+fhir when _format=json is supplied.'
+    - 'totalview.healthos.elevancehealth.com serves the CapabilityStatement as text/plain;charset=UTF-8 despite the body being FHIR JSON.'
+pagination:
+  style: FHIR Bundle link relations
+  request_params: ['_count']
+  response_fields: ['Bundle.total', 'Bundle.link[relation=next]', 'Bundle.link[relation=self]']
+  operation: >-
+    The Patient360 (DSTU2) server additionally declares a server-level $getPage operation in its Conformance
+    statement.
+  note: No offset/limit or opaque-cursor query parameters; paging is entirely by following Bundle.link.next.
+filtering:
+  style: FHIR search parameters, declared per resource in each server's capability statement
+  common_params: ['_id', '_lastUpdated', '_source']
+  includes: '_include (e.g. _include=PractitionerRole:practitioner) is documented for the Provider Directory API'
+  note: Search-parameter support is per-resource; the capability statement is the authoritative list.
+field_expansion:
+  supported: true
+  mechanism: '_include / _revinclude'
+sparse_fields:
+  supported: false
+  note: '_elements is not declared by either server.'
+metadata:
+  discovery_endpoint: '/metadata (FHIR capability statement) on every FHIR base'
+  observed:
+    - url: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd/metadata
+      status: 200
+    - url: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/frmlry/metadata
+      status: 403
+    - url: https://patient360c.anthem.com/P360Member/api/fhir/metadata
+      status: 200
+request_id_tracing:
+  supported: false
+  note: >-
+    No X-Request-Id, X-Correlation-Id or trace header is documented, and none was returned on any probed
+    response. A client that hits the 500 below has no identifier to quote to support.
+versioning:
+  see: lifecycle/anthem-lifecycle.yml
+  summary: Version is the FHIR release plus the implementation-guide version; no header or URL API version.
+error_envelope:
+  fhir_expected: FHIR OperationOutcome
+  observed:
+    shape: '{ "status_code": <int>, "status": "failed", "error": "<short>", "error_description": "<sentence>" }'
+    content_type: application/json
+    example:
+      status_code: 500
+      status: failed
+      error: Internal server error
+      error_description: An unexpected error occurred. Please try again
+  finding: >-
+    On the CMS-mandate Provider Directory base, EVERY anonymous data request returns HTTP 500 with the
+    envelope above — a valid resource search, an unknown resource type and an unknown id all produce the
+    identical body. The gateway reports what is almost certainly an authorization failure as a server fault,
+    in a non-FHIR envelope, with no discriminating field. A client cannot distinguish "my token is missing"
+    from "the service is down" from "that id does not exist".
+  see: errors/anthem-problem-types.yml
+rate_limit_signaling:
+  headers: []
+  note: >-
+    No X-RateLimit-*, RateLimit-* or Retry-After header was observed and none is documented. See
+    rate-limits/anthem-rate-limits.yml.
+idempotency:
+  supported: na
+  reason: >-
+    The published surface is read-only — the Provider Directory and Formulary capability statements declare
+    only read, vread, search-type and history-instance. There is no unsafe write to key, so idempotency is
+    not-applicable rather than missing. (The Patient360 DSTU2 server does declare create/update/delete on
+    most resources, but those are internal HIEBus interactions, not part of the member-facing read surface
+    Anthem documents, and no Idempotency-Key header is documented for them.)
+dry_run_mode:
+  supported: na
+  reason: Read-only public surface; nothing to rehearse.
+reversibility:
+  applicable: false
+  grade: na
+  reason: >-
+    Anthem's published API surface performs no state change a caller could need to take back. The Provider
+    Directory, Formulary and Patient Access APIs are read APIs: the capability statements declare read,
+    vread, search-type and history only, and the CMS rules they implement mandate disclosure of data, not
+    mutation of it. There is therefore no cancel, refund, void, reverse or restore operation to document and
+    no window to state — an honest not-applicable, not an omission.
+  write_surfaces: []
+  adjacent_reversals:
+    - name: Member consent revocation
+      operation_id: null
+      mechanism: >-
+        The one reversible act in this system belongs to the MEMBER, not the API client: a member authorizes
+        an app through SMART on FHIR and can withdraw that authorization. The identity server exposes
+        OAuth 2.0 token revocation at
+        https://patient360c.anthem.com/P360Member/identityserver/connect/revocation and end-session at
+        .../connect/endsession.
+      window: >-
+        Anthem states a Patient Access token is valid for 90 days and that ongoing access requires renewed
+        consent, so authorization lapses on its own within 90 days. Anthem does not publish a member-facing
+        revocation window or an SLA for propagating a revocation, so none is asserted here.
+      evidence:
+        - https://patient360c.anthem.com/P360Member/identityserver/.well-known/openid-configuration
+        - https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+cross_links:
+  errors: errors/anthem-problem-types.yml
+  lifecycle: lifecycle/anthem-lifecycle.yml
+  authentication: authentication/anthem-authentication.yml
+  scopes: scopes/anthem-scopes.yml
+  rate_limits: rate-limits/anthem-rate-limits.yml
+base_urls:
+  note: >-
+    repair-api-bases reports "disagreement" for this provider, and the disagreement is REAL, not an error to
+    repair: Anthem runs two independent API platforms on two hosts. The CMS-mandate APIs (Patient Access,
+    Provider Directory, Formulary) live on totalview.healthos.elevancehealth.com — the elevancehealth.com
+    domain is correct there because Anthem IS Elevance Health, and Anthem's own developer portal PDF names
+    that host. The Patient360 member FHIR server lives on patient360c.anthem.com. Each apis.yml entry carries
+    the base its own documentation names; no single base was picked for all of them. The previously recorded
+    base, https://fhir.anthem.com/r4/, was never real — the hostname is NXDOMAIN.
+  platforms:
+    - host: totalview.healthos.elevancehealth.com
+      apis: [Patient Access, Provider Directory, Drug Formulary]
+      auth: OAuth 2.0 client credentials (and SMART on FHIR for Patient Access)
+      source: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+    - host: patient360c.anthem.com
+      apis: [Patient360 Member FHIR]
+      auth: SMART on FHIR authorization_code
+      source: https://patient360c.anthem.com/P360Member/api/fhir/metadata
+  retired:
+    - url: https://fhir.anthem.com/r4/
+      status: NXDOMAIN
+      note: Recorded in this repo through 2026-08; the hostname does not resolve and never served an API.
+    - url: https://www.anthem.com/developer/
+      status: 404
+      note: Wrong path; the real developer portal is https://www.anthem.com/developers (no trailing 'er').

@@ -1,0 +1,95 @@
+generated: '2026-09-02'
+method: probed
+source: >-
+  live probes of https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/
+  and https://patient360c.anthem.com/P360Member/api/fhir, 2026-09-02; plus
+  openapi/anthem-provider-directory-api-openapi.yml
+docs: https://www.anthem.com/developers
+format: vendor-json
+format_note: >-
+  NOT rfc9457 and NOT FHIR OperationOutcome. Anthem's CMS-mandate gateway answers with a bespoke JSON
+  envelope carrying content-type application/json. Anthem publishes no error reference page of any kind, so
+  every entry below is an observed response, not a documented one.
+envelope:
+  fields:
+    - name: status_code
+      type: integer
+      note: Repeats the HTTP status in the body.
+    - name: status
+      type: string
+      note: Observed value "failed".
+    - name: error
+      type: string
+      note: Short label, e.g. "Internal server error".
+    - name: error_description
+      type: string
+      note: Human sentence, e.g. "An unexpected error occurred. Please try again".
+  discriminator: none
+  discriminator_note: >-
+    There is no error code, no type URI and no correlation id. Two different failures are indistinguishable
+    to a client and unquotable to support.
+problem_types:
+  - id: internal-server-error
+    status: 500
+    title: Internal server error
+    detail: An unexpected error occurred. Please try again
+    method: probed
+    observed_on:
+      - url: .../cms_mandate/mcd/InsurancePlan
+        status: 500
+      - url: .../cms_mandate/mcd/InsurancePlan?_count=1
+        status: 500
+      - url: .../cms_mandate/mcd/Bogus
+        status: 500
+      - url: .../cms_mandate/mcd/Practitioner/zzzz
+        status: 500
+    remediation: >-
+      Almost certainly an authorization failure wearing a 500. Obtain an OAuth 2.0 client-credentials token
+      from the access-token URL Anthem issues by secure email and retry with Authorization: Bearer. Do NOT
+      write a retry-with-backoff loop against this status as if it were transient — an unauthenticated
+      caller will receive it forever.
+    finding: >-
+      THE CENTRAL DEFECT IN THIS API'S ERROR SEMANTICS. A missing credential, an unknown FHIR resource type
+      and a non-existent logical id all return byte-identical 500 bodies. The correct responses are 401 with
+      a WWW-Authenticate challenge, 404, and 404 respectively. An agent cannot self-correct against this,
+      and a monitoring system cannot tell an Anthem outage from its own expired secret.
+  - id: forbidden
+    status: 403
+    title: Forbidden
+    detail: '(empty body)'
+    method: probed
+    observed_on:
+      - url: .../cms_mandate/frmlry/metadata
+        status: 403
+    remediation: >-
+      The Formulary base refuses anonymous requests outright, including its own FHIR capability statement.
+      Present a Formulary-scoped client-credentials token. Note the inconsistency: the sibling Provider
+      Directory base serves /metadata anonymously at 200.
+  - id: not-found
+    status: 404
+    title: Not Found
+    method: derived
+    detail: >-
+      Declared in the derived OpenAPI for read and vread. NOT confirmed live — every unauthenticated attempt
+      to elicit a 404 returned 500 instead, so this response shape is inherited from FHIR convention rather
+      than observed.
+  - id: unauthorized
+    status: 401
+    title: Unauthorized
+    method: derived
+    detail: >-
+      Expected by convention for a missing or expired bearer token. NEVER OBSERVED on this platform; the
+      gateway substitutes 500. Recorded so a client knows to handle it if Anthem corrects the behaviour.
+  - id: fhir-operation-outcome
+    status: 4xx/5xx
+    title: FHIR OperationOutcome
+    method: derived
+    detail: >-
+      The Patient360 DSTU2 server is a standard FHIR server and is expected to return OperationOutcome on
+      error, but every data path there is behind SMART authorization and no error body could be observed
+      anonymously. Not asserted as fact.
+gaps:
+  - No published error reference page.
+  - No machine-readable error code registry.
+  - No Retry-After on any observed response.
+  - No request/correlation id on any observed response.

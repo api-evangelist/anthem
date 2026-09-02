@@ -1,0 +1,1188 @@
+openapi: 3.1.0
+info:
+  title: Anthem Provider Directory FHIR API
+  version: 1.0.0
+  description: 'Anthem''s CMS-mandated Provider Directory API, delivered as HL7 FHIR R4 (4.0.1) and conforming to
+    the Da Vinci PDEX Plan Net 1.1.0 and HL7 FHIR US Core STU 3.1.1 implementation guides. Exposes network practitioners,
+    practitioner roles, organizations, organization affiliations, locations, healthcare services and insurance plans
+    for Anthem and affiliated Elevance Health brands.
+
+
+    DERIVED, operation by operation, from the live CapabilityStatement the server itself publishes at https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd/metadata
+    (fetched 2026-09-02, HTTP 200, publisher ''Elevance Health, Inc'') and from the search-parameter tables in Anthem''s
+    own Interoperability API Endpoint Support Document (IO105 v15.0, effective 2025-11-18). Every path, interaction
+    and search parameter below is declared by Anthem; the OpenAPI structure and the operationIds are the API Evangelist
+    pipeline''s.'
+  contact:
+    name: Anthem Interoperability Workgroup
+    email: interoperabilityworkgroup@anthem.com
+    url: https://www.anthem.com/developers
+  x-derived-from: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd/metadata
+  x-derived-method: derived
+servers:
+- url: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd
+  description: Provider Directory production FHIR base (registration required; OAuth 2.0 client credentials)
+security:
+- bearerAuth: []
+tags:
+- name: HealthcareService
+  description: FHIR HealthcareService resource, profile http://hl7.org/fhir/StructureDefinition/HealthcareService
+- name: InsurancePlan
+  description: FHIR InsurancePlan resource, profile http://hl7.org/fhir/StructureDefinition/InsurancePlan
+- name: Location
+  description: FHIR Location resource, profile http://hl7.org/fhir/StructureDefinition/Location
+- name: Organization
+  description: FHIR Organization resource, profile http://hl7.org/fhir/StructureDefinition/Organization
+- name: OrganizationAffiliation
+  description: FHIR OrganizationAffiliation resource, profile http://hl7.org/fhir/StructureDefinition/OrganizationAffiliation
+- name: Practitioner
+  description: FHIR Practitioner resource, profile http://hl7.org/fhir/StructureDefinition/Practitioner
+- name: PractitionerRole
+  description: FHIR PractitionerRole resource, profile http://hl7.org/fhir/StructureDefinition/PractitionerRole
+- name: Specimen
+  description: FHIR Specimen resource, profile http://hl7.org/fhir/StructureDefinition/Specimen
+- name: Conformance
+  description: Server capability statement
+paths:
+  /metadata:
+    get:
+      summary: Retrieve the FHIR CapabilityStatement for the Provider Directory server
+      description: Returns the server CapabilityStatement (FHIR R4 4.0.1). This endpoint answers anonymously; the
+        resource endpoints below do not.
+      operationId: getCapabilityStatement
+      tags:
+      - Conformance
+      security: []
+      responses:
+        '200':
+          description: CapabilityStatement resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: CapabilityStatement
+  /HealthcareService:
+    get:
+      summary: Search HealthcareService resources
+      description: Search the Anthem / Elevance Health provider directory for HealthcareService resources. Conforms
+        to the Da Vinci PDEX Plan Net 1.1.0 implementation guide. Returns a FHIR Bundle of type searchset.
+      operationId: searchHealthcareService
+      tags:
+      - HealthcareService
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: Logical id of the resource.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: Date the resource was last updated (FHIR date search).
+        schema:
+          type: string
+      - name: location
+        in: query
+        required: false
+        description: Reference to a Location.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: Name of the resource (string search).
+        schema:
+          type: string
+      - name: organization
+        in: query
+        required: false
+        description: Reference to an Organization.
+        schema:
+          type: string
+      - name: service-category
+        in: query
+        required: false
+        description: Service category coding, as [system]|[code].
+        schema:
+          type: string
+      - name: service-type
+        in: query
+        required: false
+        description: Service type coding, as [system]|[code].
+        schema:
+          type: string
+      - name: specialty
+        in: query
+        required: false
+        description: Specialty coding, as [system]|[code].
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of HealthcareService resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /HealthcareService/{id}:
+    get:
+      summary: Read a HealthcareService by id
+      description: Read a single HealthcareService resource by its logical id.
+      operationId: readHealthcareService
+      tags:
+      - HealthcareService
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the HealthcareService resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HealthcareService resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: HealthcareService
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /HealthcareService/{id}/_history/{vid}:
+    get:
+      summary: Read a specific version of a HealthcareService
+      description: Version-read (vread) of a HealthcareService resource.
+      operationId: vreadHealthcareService
+      tags:
+      - HealthcareService
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the HealthcareService resource.
+        schema:
+          type: string
+      - name: vid
+        in: path
+        required: true
+        description: Version id of the resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HealthcareService resource at the requested version
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: HealthcareService
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /InsurancePlan:
+    get:
+      summary: Search InsurancePlan resources
+      description: Search the Anthem / Elevance Health provider directory for InsurancePlan resources. Conforms
+        to the Da Vinci PDEX Plan Net 1.1.0 implementation guide. Returns a FHIR Bundle of type searchset.
+      operationId: searchInsurancePlan
+      tags:
+      - InsurancePlan
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: Logical id of the resource.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: Date the resource was last updated (FHIR date search).
+        schema:
+          type: string
+      - name: coverage-area
+        in: query
+        required: false
+        description: Reference to the Location describing the coverage area.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: Business identifier, as [system]|[code].
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: Name of the resource (string search).
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: Type coding, as [system]|[code].
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of InsurancePlan resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /InsurancePlan/{id}:
+    get:
+      summary: Read a InsurancePlan by id
+      description: Read a single InsurancePlan resource by its logical id.
+      operationId: readInsurancePlan
+      tags:
+      - InsurancePlan
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the InsurancePlan resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: InsurancePlan resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: InsurancePlan
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /InsurancePlan/{id}/_history/{vid}:
+    get:
+      summary: Read a specific version of a InsurancePlan
+      description: Version-read (vread) of a InsurancePlan resource.
+      operationId: vreadInsurancePlan
+      tags:
+      - InsurancePlan
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the InsurancePlan resource.
+        schema:
+          type: string
+      - name: vid
+        in: path
+        required: true
+        description: Version id of the resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: InsurancePlan resource at the requested version
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: InsurancePlan
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Location:
+    get:
+      summary: Search Location resources
+      description: Search the Anthem / Elevance Health provider directory for Location resources. Conforms to the
+        Da Vinci PDEX Plan Net 1.1.0 implementation guide. Returns a FHIR Bundle of type searchset.
+      operationId: searchLocation
+      tags:
+      - Location
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: Logical id of the resource.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: Date the resource was last updated (FHIR date search).
+        schema:
+          type: string
+      - name: address
+        in: query
+        required: false
+        description: Address (string search).
+        schema:
+          type: string
+      - name: address-city
+        in: query
+        required: false
+        description: City portion of the address.
+        schema:
+          type: string
+      - name: address-state
+        in: query
+        required: false
+        description: State portion of the address.
+        schema:
+          type: string
+      - name: address-postalcode
+        in: query
+        required: false
+        description: Postal code portion of the address.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of Location resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Location/{id}:
+    get:
+      summary: Read a Location by id
+      description: Read a single Location resource by its logical id.
+      operationId: readLocation
+      tags:
+      - Location
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Location resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Location resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: Location
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Location/{id}/_history/{vid}:
+    get:
+      summary: Read a specific version of a Location
+      description: Version-read (vread) of a Location resource.
+      operationId: vreadLocation
+      tags:
+      - Location
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Location resource.
+        schema:
+          type: string
+      - name: vid
+        in: path
+        required: true
+        description: Version id of the resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Location resource at the requested version
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: Location
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Organization:
+    get:
+      summary: Search Organization resources
+      description: Search the Anthem / Elevance Health provider directory for Organization resources. Conforms to
+        the Da Vinci PDEX Plan Net 1.1.0 implementation guide. Returns a FHIR Bundle of type searchset.
+      operationId: searchOrganization
+      tags:
+      - Organization
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: Logical id of the resource.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: Date the resource was last updated (FHIR date search).
+        schema:
+          type: string
+      - name: address
+        in: query
+        required: false
+        description: Address (string search).
+        schema:
+          type: string
+      - name: address-city
+        in: query
+        required: false
+        description: City portion of the address.
+        schema:
+          type: string
+      - name: address-state
+        in: query
+        required: false
+        description: State portion of the address.
+        schema:
+          type: string
+      - name: address-postalcode
+        in: query
+        required: false
+        description: Postal code portion of the address.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: Name of the resource (string search).
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: Type coding, as [system]|[code].
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of Organization resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Organization/{id}:
+    get:
+      summary: Read a Organization by id
+      description: Read a single Organization resource by its logical id.
+      operationId: readOrganization
+      tags:
+      - Organization
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Organization resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Organization resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: Organization
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Organization/{id}/_history/{vid}:
+    get:
+      summary: Read a specific version of a Organization
+      description: Version-read (vread) of a Organization resource.
+      operationId: vreadOrganization
+      tags:
+      - Organization
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Organization resource.
+        schema:
+          type: string
+      - name: vid
+        in: path
+        required: true
+        description: Version id of the resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Organization resource at the requested version
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: Organization
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /OrganizationAffiliation:
+    get:
+      summary: Search OrganizationAffiliation resources
+      description: Search the Anthem / Elevance Health provider directory for OrganizationAffiliation resources.
+        Conforms to the Da Vinci PDEX Plan Net 1.1.0 implementation guide. Returns a FHIR Bundle of type searchset.
+      operationId: searchOrganizationAffiliation
+      tags:
+      - OrganizationAffiliation
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: Logical id of the resource.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: Date the resource was last updated (FHIR date search).
+        schema:
+          type: string
+      - name: location
+        in: query
+        required: false
+        description: Reference to a Location.
+        schema:
+          type: string
+      - name: network
+        in: query
+        required: false
+        description: Reference to a network Organization.
+        schema:
+          type: string
+      - name: participating-organization
+        in: query
+        required: false
+        description: Reference to the participating Organization.
+        schema:
+          type: string
+      - name: primary-organization
+        in: query
+        required: false
+        description: Reference to the primary Organization.
+        schema:
+          type: string
+      - name: service
+        in: query
+        required: false
+        description: Reference to a HealthcareService.
+        schema:
+          type: string
+      - name: specialty
+        in: query
+        required: false
+        description: Specialty coding, as [system]|[code].
+        schema:
+          type: string
+      - name: role
+        in: query
+        required: false
+        description: Role coding, as [system]|[code].
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of OrganizationAffiliation resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /OrganizationAffiliation/{id}:
+    get:
+      summary: Read a OrganizationAffiliation by id
+      description: Read a single OrganizationAffiliation resource by its logical id.
+      operationId: readOrganizationAffiliation
+      tags:
+      - OrganizationAffiliation
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the OrganizationAffiliation resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OrganizationAffiliation resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: OrganizationAffiliation
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /OrganizationAffiliation/{id}/_history/{vid}:
+    get:
+      summary: Read a specific version of a OrganizationAffiliation
+      description: Version-read (vread) of a OrganizationAffiliation resource.
+      operationId: vreadOrganizationAffiliation
+      tags:
+      - OrganizationAffiliation
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the OrganizationAffiliation resource.
+        schema:
+          type: string
+      - name: vid
+        in: path
+        required: true
+        description: Version id of the resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OrganizationAffiliation resource at the requested version
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: OrganizationAffiliation
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Practitioner:
+    get:
+      summary: Search Practitioner resources
+      description: Search the Anthem / Elevance Health provider directory for Practitioner resources. Conforms to
+        the Da Vinci PDEX Plan Net 1.1.0 implementation guide. Returns a FHIR Bundle of type searchset.
+      operationId: searchPractitioner
+      tags:
+      - Practitioner
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: Logical id of the resource.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: Date the resource was last updated (FHIR date search).
+        schema:
+          type: string
+      - name: family
+        in: query
+        required: false
+        description: Family (last) name of the practitioner.
+        schema:
+          type: string
+      - name: given
+        in: query
+        required: false
+        description: Given (first) name of the practitioner.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: Name of the resource (string search).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of Practitioner resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Practitioner/{id}:
+    get:
+      summary: Read a Practitioner by id
+      description: Read a single Practitioner resource by its logical id.
+      operationId: readPractitioner
+      tags:
+      - Practitioner
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Practitioner resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Practitioner resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: Practitioner
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Practitioner/{id}/_history/{vid}:
+    get:
+      summary: Read a specific version of a Practitioner
+      description: Version-read (vread) of a Practitioner resource.
+      operationId: vreadPractitioner
+      tags:
+      - Practitioner
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Practitioner resource.
+        schema:
+          type: string
+      - name: vid
+        in: path
+        required: true
+        description: Version id of the resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Practitioner resource at the requested version
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: Practitioner
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /PractitionerRole:
+    get:
+      summary: Search PractitionerRole resources
+      description: Search the Anthem / Elevance Health provider directory for PractitionerRole resources. Conforms
+        to the Da Vinci PDEX Plan Net 1.1.0 implementation guide. Returns a FHIR Bundle of type searchset.
+      operationId: searchPractitionerRole
+      tags:
+      - PractitionerRole
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: Logical id of the resource.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: Date the resource was last updated (FHIR date search).
+        schema:
+          type: string
+      - name: location
+        in: query
+        required: false
+        description: Reference to a Location.
+        schema:
+          type: string
+      - name: network
+        in: query
+        required: false
+        description: Reference to a network Organization.
+        schema:
+          type: string
+      - name: organization
+        in: query
+        required: false
+        description: Reference to an Organization.
+        schema:
+          type: string
+      - name: practitioner
+        in: query
+        required: false
+        description: Reference to a Practitioner.
+        schema:
+          type: string
+      - name: service
+        in: query
+        required: false
+        description: Reference to a HealthcareService.
+        schema:
+          type: string
+      - name: specialty
+        in: query
+        required: false
+        description: Specialty coding, as [system]|[code].
+        schema:
+          type: string
+      - name: role
+        in: query
+        required: false
+        description: Role coding, as [system]|[code].
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of PractitionerRole resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /PractitionerRole/{id}:
+    get:
+      summary: Read a PractitionerRole by id
+      description: Read a single PractitionerRole resource by its logical id.
+      operationId: readPractitionerRole
+      tags:
+      - PractitionerRole
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the PractitionerRole resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: PractitionerRole resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: PractitionerRole
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /PractitionerRole/{id}/_history/{vid}:
+    get:
+      summary: Read a specific version of a PractitionerRole
+      description: Version-read (vread) of a PractitionerRole resource.
+      operationId: vreadPractitionerRole
+      tags:
+      - PractitionerRole
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the PractitionerRole resource.
+        schema:
+          type: string
+      - name: vid
+        in: path
+        required: true
+        description: Version id of the resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: PractitionerRole resource at the requested version
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: PractitionerRole
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Specimen:
+    get:
+      summary: Search Specimen resources
+      description: Search the Anthem / Elevance Health provider directory for Specimen resources. Conforms to the
+        Da Vinci PDEX Plan Net 1.1.0 implementation guide. Returns a FHIR Bundle of type searchset.
+      operationId: searchSpecimen
+      tags:
+      - Specimen
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page (FHIR paging).
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: Logical id of the resource.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: Date the resource was last updated (FHIR date search).
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: Source system that supplied the resource.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: Reference to a Patient.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (searchset) of Specimen resources
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Specimen/{id}:
+    get:
+      summary: Read a Specimen by id
+      description: Read a single Specimen resource by its logical id.
+      operationId: readSpecimen
+      tags:
+      - Specimen
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Specimen resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Specimen resource
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: Specimen
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Specimen/{id}/_history/{vid}:
+    get:
+      summary: Read a specific version of a Specimen
+      description: Version-read (vread) of a Specimen resource.
+      operationId: vreadSpecimen
+      tags:
+      - Specimen
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Specimen resource.
+        schema:
+          type: string
+      - name: vid
+        in: path
+        required: true
+        description: Version id of the resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Specimen resource at the requested version
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+                title: Specimen
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /Specimen/{id}/_history:
+    get:
+      summary: Retrieve the version history of a Specimen
+      description: Instance-level history for a Specimen resource.
+      operationId: historySpecimen
+      tags:
+      - Specimen
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Specimen resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle (history) of Specimen versions
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'OAuth 2.0 client-credentials access token. Client id, client secret and the token endpoint URL
+        are issued by Anthem over secure email after the Provider Directory API Production Environment request form
+        is approved. Source: Anthem Interoperability API Endpoint Support Document IO105 v15.0.'
+  schemas:
+    Bundle:
+      type: object
+      title: FHIR Bundle
+      description: FHIR R4 Bundle. See http://hl7.org/fhir/R4/bundle.html
+      properties:
+        resourceType:
+          type: string
+        type:
+          type: string
+        total:
+          type: integer
+        link:
+          type: array
+          items:
+            type: object
+        entry:
+          type: array
+          items:
+            type: object
+    ErrorEnvelope:
+      type: object
+      title: Anthem gateway error envelope
+      description: The non-FHIR JSON error body observed live from this host on 2026-09-02. It is NOT a FHIR OperationOutcome.
+      properties:
+        status_code:
+          type: integer
+        status:
+          type: string
+        error:
+          type: string
+        error_description:
+          type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ServerError:
+      description: 'Internal server error. OBSERVED BEHAVIOUR (probed 2026-09-02): this host returns HTTP 500 with
+        this envelope for anonymous requests to every resource path, rather than a 401 or a FHIR OperationOutcome.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            status_code: 500
+            status: failed
+            error: Internal server error
+            error_description: An unexpected error occurred. Please try again

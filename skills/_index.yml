@@ -1,0 +1,27 @@
+generated: '2026-09-02'
+method: generated
+source: >-
+  openapi/anthem-provider-directory-api-openapi.yml, openapi/anthem-drug-formulary-api-openapi.yml,
+  openapi/anthem-patient360-member-fhir-api-openapi.yml, conventions/anthem-conventions.yml,
+  errors/anthem-problem-types.yml, authentication/anthem-authentication.yml
+note: >-
+  Anthem publishes no agent skills, no AGENTS.md and no llms.txt of its own. These three are packaged by the
+  API Evangelist pipeline from Anthem's real contracts; every operationId referenced exists in the OpenAPI
+  documents in openapi/, which were themselves derived from live FHIR capability statements and Anthem's own
+  endpoint support document.
+skills:
+  - name: anthem-find-in-network-provider
+    file: anthem-find-in-network-provider.md
+    api: Anthem Provider Directory FHIR API
+    description: Find an in-network practitioner, facility or service for a given plan and location.
+    operations: 9
+  - name: anthem-check-drug-coverage
+    file: anthem-check-drug-coverage.md
+    api: Anthem Drug Formulary FHIR API
+    description: Determine whether a drug is on an Anthem Medicare, Medicaid or CHIP formulary, and at what tier.
+    operations: 6
+  - name: anthem-member-patient-access
+    file: anthem-member-patient-access.md
+    api: Anthem Patient Access API / Patient360 Member FHIR API
+    description: Obtain member consent via SMART on FHIR and read their claims and clinical history.
+    operations: 9

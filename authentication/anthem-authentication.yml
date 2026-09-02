@@ -1,0 +1,106 @@
+generated: '2026-09-02'
+method: searched
+source: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+docs: https://www.anthem.com/developers
+note: >-
+  Anthem runs two distinct authorization models across two distinct API platforms, and they do not share
+  an identity provider. (1) The CMS-mandate APIs on totalview.healthos.elevancehealth.com use OAuth 2.0
+  CLIENT CREDENTIALS: Anthem issues the client id, the client secret AND the token endpoint URL itself
+  over secure email once a Production Environment request form is approved, so there is no published
+  token endpoint and no discovery document for that platform. (2) The Patient360 member FHIR server on
+  patient360c.anthem.com uses SMART on FHIR / OpenID Connect authorization_code, and its identity server
+  publishes a full anonymous discovery document with 1,048 scopes. Endpoints below marked probed were read
+  from that live document on 2026-09-02; endpoints for platform (1) are documented as issued-by-email
+  because Anthem publishes no URL for them.
+summary:
+  types:
+    - oauth2
+    - http
+  oauth2_flows:
+    - authorizationCode
+    - clientCredentials
+  member_consent_required: true
+  token_lifetime: >-
+    Patient Access production tokens are valid for 90 days; continued access requires renewed member
+    consent (Anthem Interoperability API Endpoint Support Document IO105 v15.0).
+schemes:
+  - name: smartOnFhir
+    type: oauth2
+    platform: Patient360 member FHIR (patient360c.anthem.com)
+    method: probed
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://patient360c.anthem.com/P360Member/identityserver/connect/authorize
+        tokenUrl: https://patient360c.anthem.com/P360Member/identityserver/connect/token
+        refreshUrl: https://patient360c.anthem.com/P360Member/identityserver/connect/token
+        scopes: 1048
+    issuer: https://patient360.anthem.com/P360Member/identityserver
+    jwks_uri: https://patient360c.anthem.com/P360Member/identityserver/.well-known/jwks
+    introspection_endpoint: https://patient360c.anthem.com/P360Member/identityserver/connect/introspect
+    revocation_endpoint: https://patient360c.anthem.com/P360Member/identityserver/connect/revocation
+    userinfo_endpoint: https://patient360c.anthem.com/P360Member/identityserver/connect/userinfo
+    end_session_endpoint: https://patient360c.anthem.com/P360Member/identityserver/connect/endsession
+    pkce: true
+    code_challenge_methods_supported: [plain, S256]
+    id_token_signing_alg_values_supported: [RS256]
+    token_endpoint_auth_methods_supported: [client_secret_post, client_secret_basic]
+    grant_types_supported:
+      - authorization_code
+      - client_credentials
+      - password
+      - refresh_token
+      - implicit
+      - post_login
+      - cookie_to_token
+      - new_token
+      - external_token
+    description: >-
+      SMART on FHIR authorization, declared by the FHIR server's own security extension
+      http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris in its live Conformance
+      statement, and corroborated by the identity server's OpenID Connect discovery document.
+    sources:
+      - https://patient360c.anthem.com/P360Member/api/fhir/metadata
+      - https://patient360c.anthem.com/P360Member/identityserver/.well-known/openid-configuration
+      - openapi/anthem-patient360-member-fhir-api-openapi.yml
+  - name: bearerAuth
+    type: http
+    scheme: bearer
+    platform: CMS-mandate FHIR (totalview.healthos.elevancehealth.com)
+    method: searched
+    oauth2_flow: clientCredentials
+    token_endpoint: issued to each approved developer by secure email; not published
+    credential_issuance: >-
+      Complete the Provider Directory API or Formulary API Production Environment request form on the
+      developer portal. On approval Anthem sends the client id, client secret and access token URL by
+      secure email. Token requests are POSTed with Content-Type application/x-www-form-urlencoded, HTTP
+      Basic authorization carrying the base64 client id:secret, and grant_type=client_credentials. API
+      calls then carry Authorization: Bearer <token>.
+    description: >-
+      OAuth 2.0 client-credentials bearer token for the Provider Directory and Formulary APIs.
+    sources:
+      - https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+      - openapi/anthem-provider-directory-api-openapi.yml
+      - openapi/anthem-drug-formulary-api-openapi.yml
+registration:
+  - name: Patient Access API production access
+    url: https://www.anthem.com/developers/request-anthem-io
+    requires: member consent; approval can take several weeks
+  - name: Provider Directory API production access
+    url: https://www.anthem.com/developers/provider-directory-api-request
+    requires: registration form; credentials returned by secure email
+  - name: Patient Access sandbox
+    url: https://www.anthem.com/developers
+    requires: developer self-registration; synthetic data only
+contact: interoperabilityworkgroup@anthem.com
+observations:
+  - probe: GET https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd/metadata
+    status: 200
+    note: CapabilityStatement is served anonymously; it declares NO security block at all.
+  - probe: GET https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd/InsurancePlan
+    status: 500
+    note: >-
+      Anonymous data requests return HTTP 500 with a non-FHIR envelope rather than 401 with a
+      WWW-Authenticate challenge, so a client cannot tell an auth failure from an outage.
+  - probe: GET https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/frmlry/metadata
+    status: 403
+    note: The Formulary server refuses even its own capability statement anonymously.

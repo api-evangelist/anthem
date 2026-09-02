@@ -1,0 +1,27 @@
+overlay: 1.0.0
+info:
+  title: Anthem Patient360 Member FHIR API — API Evangelist enhancements
+  version: 1.0.0
+extends: openapi/anthem-patient360-member-fhir-api-openapi.yml
+x-generated: '2026-09-02'
+x-method: generated
+x-source: Enhancements over the contract derived from the server's live DSTU2 Conformance statement.
+actions:
+  - target: $.info
+    update:
+      x-provider: Anthem (Elevance Health)
+      x-server-software: CareEvolution HIEBus 32.11.4
+      x-fhir-version: 1.0.2 (DSTU2)
+      x-currency-warning: >-
+        DSTU2 was superseded by STU3 in 2017 and by R4 in 2019. This server still serves live member data on
+        it, in parallel with Anthem's R4 CMS-mandate surface, and Anthem publishes no migration date.
+      x-discovery:
+        conformance: https://patient360c.anthem.com/P360Member/api/fhir/metadata
+        openid_configuration: https://patient360c.anthem.com/P360Member/identityserver/.well-known/openid-configuration
+        jwks: https://patient360c.anthem.com/P360Member/identityserver/.well-known/jwks
+      x-scope-count: 1048
+  - target: $.paths['/metadata'].get
+    update:
+      x-anonymous: true
+      x-format-note: >-
+        Defaults to application/xml+fhir. Append ?_format=json for application/json+fhir.

@@ -1,60 +1,84 @@
+aid: anthem
 name: Anthem
 description: >-
-  Anthem, Inc. (now operating as Elevance Health) is one of the largest health
-  benefits companies in the United States, serving members through affiliated
-  Blue Cross and Blue Shield health plans across multiple states including
-  California, New York, Virginia, Georgia, and others. Anthem provides health
-  insurance, pharmacy benefits, and behavioral health services to over 40 million
-  members. Under CMS interoperability rules (CMS-9115-F), Anthem offers FHIR-
-  based Patient Access and Provider Directory APIs.
+  Anthem, operating under Elevance Health, is one of the largest health benefits companies in the United
+  States, serving members through affiliated Blue Cross and Blue Shield health plans in California, New
+  York, Virginia, Georgia, Ohio, Indiana and other states, and through the Amerigroup, Wellpoint, Healthy
+  Blue, Simply HealthCare, Unicare, Summit and Clear Health Alliance brands. Anthem's public API surface
+  exists because the CMS Interoperability and Patient Access Final Rule (CMS-9115-F) requires it: three HL7
+  FHIR APIs — Patient Access (five years of medical, dental, vision and pharmacy claims plus clinical data,
+  under CARIN IG for Blue Button STU 2.1.0 and SMART on FHIR), Provider Directory (Da Vinci PDEX Plan Net
+  1.1.0) and Drug Formulary (Da Vinci PDEX US Drug Formulary 2.0.1 STU2) — served from
+  totalview.healthos.elevancehealth.com, alongside a separate live SMART-on-FHIR member server, Patient360,
+  still running FHIR DSTU2. There is no commercial API product, no pricing, no client SDK and no self-serve
+  key: production credentials are issued by secure email after a human-reviewed request form. Payer-to-Payer,
+  Prior Authorization and Provider Access APIs are committed under CMS-0057-F by 2027-01-01.
 deliveryModel:
   model: saas
   open_source: false
-  commercial: true
-  callable_host: false
+  commercial: false
+  callable_host: true
   label: Hosted service · you call their endpoint
-  confidence: medium
+  confidence: high
   source:
-  - pricing
-  generated: '2026-08-28'
+  - openapi
+  - plans
+  generated: '2026-09-02'
   method: derived
 accessModel:
-  pricing: unknown
-  onboarding: unknown
-  trial: false
+  pricing: free
+  onboarding: request-form
+  trial: true
   try_now: false
   public: false
-  label: Unknown
-  confidence: low
+  label: Registration-gated, no cost published
+  confidence: high
   source:
   - plans
-  generated: '2026-07-22'
+  - sandbox
+  - authentication
+  generated: '2026-09-02'
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/anthem.png
 url: https://raw.githubusercontent.com/api-evangelist/anthem/refs/heads/main/apis.yml
 created: "2026-03-23"
-modified: "2026-04-19"
+modified: "2026-09-02"
 specificationVersion: '0.23'
 tags:
   - Blue Cross Blue Shield
+  - CARIN Blue Button
+  - CMS Interoperability
+  - Da Vinci PDEX
+  - Drug Formulary
   - FHIR
+  - Fortune 100
   - Health Benefits
   - Health Insurance
   - Healthcare
   - Interoperability
-  - Fortune 100
+  - Patient Access
+  - Provider Directory
+  - SMART on FHIR
 apis:
-  - name: Anthem Patient Access API
+  - aid: anthem:patient-access
+    name: Anthem Patient Access API
     description: >-
-      The Anthem Patient Access API provides members access to their personal
-      health data via HL7 FHIR R4, as required by the CMS Interoperability and
-      Patient Access Final Rule (CMS-9115-F). Members can authorize third-party
-      apps to access their claims, clinical information, formulary data, and
-      coverage details. Implements SMART on FHIR for authorization.
+      The Anthem Patient Access API gives members, through applications they authorize, up to five years of
+      their own medical, dental, vision and pharmacy claims and clinical data, as required by the CMS
+      Interoperability and Patient Access Final Rule (CMS-9115-F). It conforms to HL7 FHIR R4 4.0.1, the
+      CARIN Consumer Directed Payer Data Exchange (CARIN IG for Blue Button) STU 2.1.0, US Core 6.1.0 and
+      the SMART Application Launch Framework 2.2.0. Production access requires member consent and issues a
+      token valid for 90 days; continued access requires renewed consent. Anthem serves a separate
+      production base per brand — Amerigroup, Anthem Blue Cross, Anthem Blue Cross Blue Shield, Blue
+      Medicare Advantage, Clear Health Alliance, Dell Children Health Plan, Healthy Blue, Healthy Blue Blue
+      Choice, Healthy Blue NC, Simply HealthCare, Summit, Unicare and Wellpoint — the Anthem Blue Cross Blue
+      Shield base is recorded here. Prior-authorization data is committed to this API by 2027-01-01 under
+      CMS-0057-F.
     image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-    humanURL: https://www.anthem.com/developer/
-    baseURL: https://fhir.anthem.com/r4/
+    humanURL: https://www.anthem.com/developers
+    baseURL: https://totalview.healthos.elevancehealth.com/resources/registered/AnthemBlueCrossBlueShield/api/v1/fhir
     tags:
+      - CARIN Blue Button
       - FHIR
       - Health Insurance
       - Healthcare
@@ -62,55 +86,136 @@ apis:
       - Patient Access
       - SMART on FHIR
     properties:
+      - type: DeveloperPortal
+        url: https://www.anthem.com/developers
       - type: Documentation
-        url: https://www.anthem.com/developer/
-      - type: Authentication
-        url: https://www.anthem.com/developer/authentication/
+        url: https://www.anthem.com/developers
+      - type: APIReference
+        url: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+      - type: SignUp
+        url: https://www.anthem.com/developers/request-anthem-io
+      - type: AgentSkill
+        url: skills/anthem-member-patient-access.md
     contact:
-      - FN: Anthem Developer Support
-        url: https://www.anthem.com/developer/
+      - FN: Anthem Interoperability Workgroup
+        email: interoperabilityworkgroup@anthem.com
+        url: https://www.anthem.com/developers
 
-  - name: Anthem Provider Directory API
+  - aid: anthem:provider-directory
+    name: Anthem Provider Directory API
     description: >-
-      The Anthem Provider Directory API provides public access to provider
-      directory information via HL7 FHIR R4, as required by CMS interoperability
-      rules. Supports searching for in-network providers, facilities, and
-      insurance plans. No authentication required for public directory access.
+      The Anthem Provider Directory API publishes network provider information as HL7 FHIR R4 4.0.1,
+      conforming to the Da Vinci PDEX Plan Net 1.1.0 and HL7 FHIR US Core STU 3.1.1 implementation guides. It
+      exposes Practitioner, PractitionerRole, Organization, OrganizationAffiliation, Location,
+      HealthcareService, InsurancePlan and Specimen resources so members and prospective members can see
+      which providers are in network for a given Anthem plan. The server publishes its own FHIR
+      CapabilityStatement anonymously at /metadata; the data paths require an OAuth 2.0 client-credentials
+      token whose client id, secret and token endpoint Anthem issues by secure email after approving the
+      Provider Directory API Production Environment request form.
     image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-    humanURL: https://www.anthem.com/developer/
-    baseURL: https://fhir.anthem.com/r4/
+    humanURL: https://www.anthem.com/developers
+    baseURL: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd
     tags:
+      - Da Vinci PDEX
       - FHIR
       - Healthcare
       - Interoperability
       - Provider Directory
     properties:
+      - type: OpenAPI
+        url: openapi/anthem-provider-directory-api-openapi.yml
+      - type: CapabilityStatement
+        url: fhir/anthem-provider-directory-capability-statement.json
+      - type: Overlay
+        url: overlays/anthem-provider-directory-api-overlay.yaml
+      - type: APIReference
+        url: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd/metadata
+      - type: DeveloperPortal
+        url: https://www.anthem.com/developers
       - type: Documentation
-        url: https://www.anthem.com/developer/
+        url: https://www.anthem.com/developers
+      - type: SignUp
+        url: https://www.anthem.com/developers/provider-directory-api-request
+      - type: AgentSkill
+        url: skills/anthem-find-in-network-provider.md
     contact:
-      - FN: Anthem Developer Support
-        url: https://www.anthem.com/developer/
+      - FN: Anthem Interoperability Workgroup
+        email: interoperabilityworkgroup@anthem.com
+        url: https://www.anthem.com/developers
 
-  - name: Anthem Drug Formulary API
+  - aid: anthem:drug-formulary
+    name: Anthem Drug Formulary API
     description: >-
-      The Anthem Drug Formulary API provides access to prescription drug
-      formulary data via HL7 FHIR R4, including covered medications, cost
-      tiers, prior authorization requirements, and quantity limits for
-      Anthem health plan formularies.
+      The Anthem Drug Formulary API publishes prescription drug formulary data as HL7 FHIR R4, conforming to
+      the Da Vinci Payer Data Exchange (PDEX) US Drug Formulary Implementation Guide 2.0.1 STU2. It covers
+      the formularies attached to Anthem Medicare, Medicaid and CHIP plans, the drug lists under each
+      formulary, cost sharing, drug tier and pharmacy type — expressed as InsurancePlan
+      (PayerInsurancePlan/Formulary), Basic (FormularyItem) and MedicationKnowledge (FormularyDrug)
+      resources. Access uses OAuth 2.0 client credentials issued by secure email; this server refuses even
+      its own capability statement to an anonymous caller.
     image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-    humanURL: https://www.anthem.com/developer/
-    baseURL: https://fhir.anthem.com/r4/
+    humanURL: https://www.anthem.com/developers
+    baseURL: https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/frmlry
     tags:
+      - Da Vinci PDEX
       - Drug Formulary
       - FHIR
       - Healthcare
       - Pharmacy
     properties:
+      - type: OpenAPI
+        url: openapi/anthem-drug-formulary-api-openapi.yml
+      - type: Overlay
+        url: overlays/anthem-drug-formulary-api-overlay.yaml
+      - type: APIReference
+        url: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+      - type: DeveloperPortal
+        url: https://www.anthem.com/developers
       - type: Documentation
-        url: https://www.anthem.com/developer/
+        url: https://www.anthem.com/developers
+      - type: AgentSkill
+        url: skills/anthem-check-drug-coverage.md
     contact:
-      - FN: Anthem Developer Support
-        url: https://www.anthem.com/developer/
+      - FN: Anthem Interoperability Workgroup
+        email: interoperabilityworkgroup@anthem.com
+        url: https://www.anthem.com/developers
+
+  - aid: anthem:patient360-member-fhir
+    name: Anthem Patient360 Member FHIR API
+    description: >-
+      The Anthem Patient360 member FHIR server (P360Member) is a live SMART-on-FHIR endpoint serving member
+      clinical, claims and coverage resources to member-authorized applications. It runs CareEvolution
+      HIEBus 32.11.4, declares itself as http://anthem.com in its own conformance statement, and exposes 32
+      FHIR resources. It is a distinct and older surface from the R4 CMS-mandate platform: it still speaks
+      FHIR DSTU2 (1.0.2). Its conformance statement and its OpenID Connect / SMART discovery document —
+      which declares 1,048 scopes — are both served anonymously, making it the most inspectable Anthem API
+      surface even though every data path is authorization-gated.
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+    humanURL: https://www.anthem.com/developers
+    baseURL: https://patient360c.anthem.com/P360Member/api/fhir
+    tags:
+      - FHIR
+      - Healthcare
+      - Interoperability
+      - Patient Access
+      - SMART on FHIR
+    properties:
+      - type: OpenAPI
+        url: openapi/anthem-patient360-member-fhir-api-openapi.yml
+      - type: CapabilityStatement
+        url: fhir/anthem-patient360-conformance-statement.json
+      - type: Overlay
+        url: overlays/anthem-patient360-member-fhir-api-overlay.yaml
+      - type: APIReference
+        url: https://patient360c.anthem.com/P360Member/api/fhir/metadata
+      - type: OpenIDConnect
+        url: https://patient360c.anthem.com/P360Member/identityserver/.well-known/openid-configuration
+      - type: OAuthScopes
+        url: scopes/anthem-scopes.yml
+    contact:
+      - FN: Anthem Interoperability Workgroup
+        email: interoperabilityworkgroup@anthem.com
+        url: https://www.anthem.com/developers
 
 maintainers:
   - FN: Kin Lane
@@ -118,57 +223,128 @@ maintainers:
     X: apievangelist
     url: https://apievangelist.com
 common:
-  - type: DomainSecurity
-    url: security/anthem-domain-security.yml
-  - type: LinkedIn
-    url: https://www.linkedin.com/company/antheminc
+  - type: DeveloperPortal
+    url: https://www.anthem.com/developers
+  - type: Documentation
+    url: https://www.anthem.com/developers
+  - type: APIReference
+    url: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+  - type: GettingStarted
+    url: https://www.anthem.com/developers
+  - type: SignUp
+    url: https://www.anthem.com/developers/request-anthem-io
+  - type: Support
+    url: https://www.anthem.com/contact-us
+  - type: Blog
+    url: https://www.anthem.com/blog
+  - type: TermsOfService
+    url: https://www.anthem.com/terms-of-use
+  - type: PrivacyPolicy
+    url: https://www.anthem.com/privacy
   - type: Portal
     url: https://www.anthem.com
-  - type: Signup
-    url: https://www.anthem.com/developer/register/
-  - type: TermsOfService
-    url: https://www.anthem.com/legal/terms-and-conditions/
-  - type: PrivacyPolicy
-    url: https://www.anthem.com/legal/privacy-policy/
+  - type: Website
+    url: https://www.elevancehealth.com
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/antheminc
+  - type: GitHubOrganization
+    url: https://github.com/openanthem
+  - type: Authentication
+    url: authentication/anthem-authentication.yml
+  - type: OAuthScopes
+    url: scopes/anthem-scopes.yml
+  - type: Conventions
+    url: conventions/anthem-conventions.yml
+  - type: ErrorCatalog
+    url: errors/anthem-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/anthem-lifecycle.yml
+  - type: Conformance
+    url: conformance/anthem-conformance.yml
+  - type: Compliance
+    url: conformance/anthem-conformance.yml
+  - type: DataModel
+    url: data-model/anthem-data-model.yml
+  - type: Sandbox
+    url: sandbox/anthem-sandbox.yml
+  - type: Packages
+    url: packages/anthem-packages.yml
+  - type: MCPServer
+    url: mcp/anthem-mcp.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: LLMsTxt
+    url: llms/anthem-llms.txt
+  - type: WellKnown
+    url: well-known/anthem-well-known.yml
+  - type: DomainSecurity
+    url: security/anthem-domain-security.yml
+  - type: Plans
+    url: plans/anthem-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/anthem-rate-limits.yml
+  - type: FinOps
+    url: finops/anthem-finops.yml
   - type: Features
     data:
-      - name: FHIR R4 Compliance
+      - name: CMS-Mandated FHIR Interoperability
         description: >-
-          All Anthem interoperability APIs implement HL7 FHIR Release 4
-          standards with USCDI-conformant resource profiles.
-      - name: SMART on FHIR Authorization
+          Patient Access, Provider Directory and Drug Formulary APIs published to satisfy the CMS
+          Interoperability and Patient Access Final Rule (CMS-9115-F), each bound to a named HL7
+          implementation guide rather than a bespoke Anthem schema.
+      - name: SMART on FHIR Member Authorization
         description: >-
-          Patient Access APIs use SMART on FHIR for secure OAuth2-based
-          authorization allowing members to grant third-party app access.
-      - name: Claims and Clinical Data
+          Members authorize third-party applications through SMART on FHIR authorization_code with PKCE.
+          Anthem's Patient360 identity server publishes an anonymous OpenID Connect discovery document
+          declaring 1,048 scopes across the patient, user and system contexts.
+      - name: Live FHIR Capability Statements
         description: >-
-          Members can access their claims history, clinical notes, lab results,
-          immunizations, and medication history through the Patient Access API.
-      - name: Provider Directory Search
+          The Provider Directory server (FHIR R4 4.0.1, publisher "Elevance Health, Inc") and the Patient360
+          member server (FHIR DSTU2 1.0.2, CareEvolution HIEBus 32.11.4) both serve their own machine-readable
+          capability statements at /metadata without credentials.
+      - name: Public Sandbox with Synthetic Data
         description: >-
-          Search for in-network providers by specialty, location, name, and
-          plan type through the public Provider Directory API.
+          A public Patient Access sandbox for FHIR functional testing with synthetic data, open on developer
+          self-registration, supporting SMART authorization and SMART client registration.
+      - name: Brand-Scoped Production Endpoints
+        description: >-
+          Thirteen separate Patient Access production bases, one per Elevance Health brand, from Amerigroup
+          and Anthem Blue Cross Blue Shield through Simply HealthCare, Unicare and Wellpoint.
   - type: UseCases
     data:
       - name: Member Health Apps
         description: >-
-          Enable member-authorized third-party health apps to aggregate claims,
-          clinical, and formulary data from Anthem plans.
+          Member-authorized third-party applications aggregating up to five years of claims, clinical and
+          pharmacy history from Anthem plans under CARIN Blue Button.
+      - name: In-Network Provider Search
+        description: >-
+          Applications resolving whether a named practitioner or facility participates in a specific Anthem
+          plan network, using Plan-Net PractitionerRole and OrganizationAffiliation edges.
+      - name: Drug Coverage and Tier Lookup
+        description: >-
+          Tools that answer whether a drug is covered by an Anthem Medicare, Medicaid or CHIP formulary, at
+          what tier, with what prior-authorization or step-therapy requirement.
       - name: Care Coordination
         description: >-
-          Allow care coordinators and providers to access member health history
-          with member authorization for improved care transitions.
-      - name: Provider Lookup
-        description: >-
-          Enable applications to search Anthem's provider directory for
-          in-network physicians, hospitals, and specialists.
+          Care coordinators and providers reading a member's history with the member's consent to support
+          care transitions.
   - type: Integrations
     data:
+      - name: CareEvolution HIEBus
+        description: >-
+          The Patient360 member FHIR server runs CareEvolution's HIEBus platform (version 32.11.4), named in
+          the server's own conformance statement.
       - name: CommonWell Health Alliance
         description: >-
-          Anthem participates in the CommonWell Health Alliance for
-          cross-organizational clinical data exchange.
+          Anthem participates in the CommonWell Health Alliance for cross-organizational clinical data
+          exchange.
       - name: Carequality Framework
         description: >-
-          Anthem participates in the Carequality interoperability framework
-          for health data exchange between networks.
+          Anthem participates in the Carequality interoperability framework for health data exchange between
+          networks.
+
+x-enrichment:
+  date: '2026-09-02'
+  status: enriched
+  artifacts_added: 26
+  pass: local-v1

@@ -1,0 +1,4040 @@
+openapi: 3.1.0
+info:
+  title: Anthem Patient360 Member FHIR API
+  version: 1.0.0
+  description: 'The Anthem Patient360 member FHIR server (P360Member), a live SMART-on-FHIR DSTU2 (FHIR 1.0.2) endpoint
+    running CareEvolution HIEBus 32.11.4 and declaring itself as http://anthem.com. It exposes member clinical,
+    claims and coverage resources to member-authorized applications.
+
+
+    DERIVED from the server''s own live Conformance statement at https://patient360c.anthem.com/P360Member/api/fhir/metadata
+    (fetched 2026-09-02, HTTP 200) and the SMART/OpenID Connect discovery document at https://patient360c.anthem.com/P360Member/identityserver/.well-known/openid-configuration
+    (HTTP 200, 1,048 scopes declared). Only the read and search interactions the server declares are represented;
+    the server additionally declares create/update/delete/validate on most resources, which are not part of the
+    member-facing read surface and are deliberately not documented here. NOTE: this DSTU2 surface is distinct from
+    — and older than — the R4 CMS-mandate Patient Access surface Anthem documents on totalview.healthos.elevancehealth.com.'
+  contact:
+    name: Anthem Interoperability Workgroup
+    email: interoperabilityworkgroup@anthem.com
+    url: https://www.anthem.com/developers
+  x-derived-from: https://patient360c.anthem.com/P360Member/api/fhir/metadata
+  x-derived-method: derived
+  x-fhir-version: 1.0.2
+servers:
+- url: https://patient360c.anthem.com/P360Member/api/fhir
+  description: Patient360 member FHIR base (SMART on FHIR)
+security:
+- smartOnFhir:
+  - patient/Account.read
+tags:
+- name: AllergyIntolerance
+  description: FHIR AllergyIntolerance resource
+- name: AuditEvent
+  description: FHIR AuditEvent resource
+- name: Binary
+  description: FHIR Binary resource
+- name: CarePlan
+  description: FHIR CarePlan resource
+- name: Claim
+  description: FHIR Claim resource
+- name: Condition
+  description: FHIR Condition resource
+- name: Coverage
+  description: FHIR Coverage resource
+- name: Device
+  description: FHIR Device resource
+- name: DiagnosticOrder
+  description: FHIR DiagnosticOrder resource
+- name: DiagnosticReport
+  description: FHIR DiagnosticReport resource
+- name: Encounter
+  description: FHIR Encounter resource
+- name: Goal
+  description: FHIR Goal resource
+- name: Group
+  description: FHIR Group resource
+- name: Immunization
+  description: FHIR Immunization resource
+- name: Location
+  description: FHIR Location resource
+- name: MedicationAdministration
+  description: FHIR MedicationAdministration resource
+- name: MedicationDispense
+  description: FHIR MedicationDispense resource
+- name: MedicationOrder
+  description: FHIR MedicationOrder resource
+- name: MedicationStatement
+  description: FHIR MedicationStatement resource
+- name: Observation
+  description: FHIR Observation resource
+- name: OperationDefinition
+  description: FHIR OperationDefinition resource
+- name: Organization
+  description: FHIR Organization resource
+- name: Patient
+  description: FHIR Patient resource
+- name: Person
+  description: FHIR Person resource
+- name: Practitioner
+  description: FHIR Practitioner resource
+- name: Procedure
+  description: FHIR Procedure resource
+- name: ProcedureRequest
+  description: FHIR ProcedureRequest resource
+- name: Provenance
+  description: FHIR Provenance resource
+- name: ReferralRequest
+  description: FHIR ReferralRequest resource
+- name: RelatedPerson
+  description: FHIR RelatedPerson resource
+- name: Specimen
+  description: FHIR Specimen resource
+- name: ValueSet
+  description: FHIR ValueSet resource
+- name: Conformance
+  description: Server conformance statement
+paths:
+  /metadata:
+    get:
+      summary: Retrieve the FHIR Conformance statement
+      description: Server Conformance resource (FHIR DSTU2 1.0.2). Answers anonymously; probed HTTP 200 on 2026-09-02.
+      operationId: getP360Conformance
+      tags:
+      - Conformance
+      security: []
+      responses:
+        '200':
+          description: Conformance resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Conformance
+  /AllergyIntolerance:
+    get:
+      summary: Search AllergyIntolerance resources
+      description: Search AllergyIntolerance resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchAllergyIntolerance
+      tags:
+      - AllergyIntolerance
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: criticality
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: manifestation
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: onset
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: recorder
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: substance
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of AllergyIntolerance resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /AllergyIntolerance/{id}:
+    get:
+      summary: Read a AllergyIntolerance by id
+      description: Read a single AllergyIntolerance resource by logical id.
+      operationId: p360ReadAllergyIntolerance
+      tags:
+      - AllergyIntolerance
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the AllergyIntolerance resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: AllergyIntolerance resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: AllergyIntolerance
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /AuditEvent:
+    get:
+      summary: Search AuditEvent resources
+      description: Search AuditEvent resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchAuditEvent
+      tags:
+      - AuditEvent
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: agent-name
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: message
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subtype
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: user
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of AuditEvent resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /AuditEvent/{id}:
+    get:
+      summary: Read a AuditEvent by id
+      description: Read a single AuditEvent resource by logical id.
+      operationId: p360ReadAuditEvent
+      tags:
+      - AuditEvent
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the AuditEvent resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: AuditEvent resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: AuditEvent
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Binary/{id}:
+    get:
+      summary: Read a Binary by id
+      description: Read a single Binary resource by logical id.
+      operationId: p360ReadBinary
+      tags:
+      - Binary
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Binary resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Binary resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /CarePlan:
+    get:
+      summary: Search CarePlan resources
+      description: Search CarePlan resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchCarePlan
+      tags:
+      - CarePlan
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: activitydate
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: goal
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of CarePlan resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /CarePlan/{id}:
+    get:
+      summary: Read a CarePlan by id
+      description: Read a single CarePlan resource by logical id.
+      operationId: p360ReadCarePlan
+      tags:
+      - CarePlan
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the CarePlan resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: CarePlan resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: CarePlan
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Claim:
+    get:
+      summary: Search Claim resources
+      description: Search Claim resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchClaim
+      tags:
+      - Claim
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: created
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provider
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Claim resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Claim/{id}:
+    get:
+      summary: Read a Claim by id
+      description: Read a single Claim resource by logical id.
+      operationId: p360ReadClaim
+      tags:
+      - Claim
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Claim resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Claim resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Claim
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Condition:
+    get:
+      summary: Search Condition resources
+      description: Search Condition resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchCondition
+      tags:
+      - Condition
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: asserter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: claim
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: clinicalstatus
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: onset
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: referral
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Condition resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Condition/{id}:
+    get:
+      summary: Read a Condition by id
+      description: Read a single Condition resource by logical id.
+      operationId: p360ReadCondition
+      tags:
+      - Condition
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Condition resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Condition resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Condition
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Coverage:
+    get:
+      summary: Search Coverage resources
+      description: Search Coverage resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchCoverage
+      tags:
+      - Coverage
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: dependent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: group
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: plan
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: sequence
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subplan
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Coverage resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Coverage/{id}:
+    get:
+      summary: Read a Coverage by id
+      description: Read a single Coverage resource by logical id.
+      operationId: p360ReadCoverage
+      tags:
+      - Coverage
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Coverage resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Coverage resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Coverage
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Device:
+    get:
+      summary: Search Device resources
+      description: Search Device resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchDevice
+      tags:
+      - Device
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: udi
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Device resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Device/{id}:
+    get:
+      summary: Read a Device by id
+      description: Read a single Device resource by logical id.
+      operationId: p360ReadDevice
+      tags:
+      - Device
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Device resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Device resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Device
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /DiagnosticOrder:
+    get:
+      summary: Search DiagnosticOrder resources
+      description: Search DiagnosticOrder resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchDiagnosticOrder
+      tags:
+      - DiagnosticOrder
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: actor
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: event-date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: item-date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: item-status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: orderer
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of DiagnosticOrder resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /DiagnosticOrder/{id}:
+    get:
+      summary: Read a DiagnosticOrder by id
+      description: Read a single DiagnosticOrder resource by logical id.
+      operationId: p360ReadDiagnosticOrder
+      tags:
+      - DiagnosticOrder
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the DiagnosticOrder resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: DiagnosticOrder resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: DiagnosticOrder
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /DiagnosticReport:
+    get:
+      summary: Search DiagnosticReport resources
+      description: Search DiagnosticReport resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchDiagnosticReport
+      tags:
+      - DiagnosticReport
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: basedOn
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: performer
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: request
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: result
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: specimen
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of DiagnosticReport resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /DiagnosticReport/{id}:
+    get:
+      summary: Read a DiagnosticReport by id
+      description: Read a single DiagnosticReport resource by logical id.
+      operationId: p360ReadDiagnosticReport
+      tags:
+      - DiagnosticReport
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the DiagnosticReport resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: DiagnosticReport resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: DiagnosticReport
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Encounter:
+    get:
+      summary: Search Encounter resources
+      description: Search Encounter resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchEncounter
+      tags:
+      - Encounter
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: admitdate
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: class
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: dischargedate
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: location
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: participant-type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: practitioner
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: reason
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Encounter resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Encounter/{id}:
+    get:
+      summary: Read a Encounter by id
+      description: Read a single Encounter resource by logical id.
+      operationId: p360ReadEncounter
+      tags:
+      - Encounter
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Encounter resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Encounter resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Encounter
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Goal:
+    get:
+      summary: Search Goal resources
+      description: Search Goal resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART on
+        FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchGoal
+      tags:
+      - Goal
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: targetdate
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Goal resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Goal/{id}:
+    get:
+      summary: Read a Goal by id
+      description: Read a single Goal resource by logical id.
+      operationId: p360ReadGoal
+      tags:
+      - Goal
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Goal resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Goal resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Goal
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Group:
+    get:
+      summary: Search Group resources
+      description: Search Group resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchGroup
+      tags:
+      - Group
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: member
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Group resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Group/{id}:
+    get:
+      summary: Read a Group by id
+      description: Read a single Group resource by logical id.
+      operationId: p360ReadGroup
+      tags:
+      - Group
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Group resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Group resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Group
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Immunization:
+    get:
+      summary: Search Immunization resources
+      description: Search Immunization resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a
+        SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchImmunization
+      tags:
+      - Immunization
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: claim
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: lot-number
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: performer
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: reason
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: reason-not-given
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: vaccine-code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Immunization resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Immunization/{id}:
+    get:
+      summary: Read a Immunization by id
+      description: Read a single Immunization resource by logical id.
+      operationId: p360ReadImmunization
+      tags:
+      - Immunization
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Immunization resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Immunization resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Immunization
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Location:
+    get:
+      summary: Search Location resources
+      description: Search Location resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchLocation
+      tags:
+      - Location
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-city
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-country
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-postalcode
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-state
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Location resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Location/{id}:
+    get:
+      summary: Read a Location by id
+      description: Read a single Location resource by logical id.
+      operationId: p360ReadLocation
+      tags:
+      - Location
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Location resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Location resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Location
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /MedicationAdministration:
+    get:
+      summary: Search MedicationAdministration resources
+      description: Search MedicationAdministration resources on the Anthem Patient360 member FHIR server (DSTU2).
+        Requires a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchMedicationAdministration
+      tags:
+      - MedicationAdministration
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: effectivetime
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: notgiven
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: practitioner
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: prescription
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of MedicationAdministration resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /MedicationAdministration/{id}:
+    get:
+      summary: Read a MedicationAdministration by id
+      description: Read a single MedicationAdministration resource by logical id.
+      operationId: p360ReadMedicationAdministration
+      tags:
+      - MedicationAdministration
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the MedicationAdministration resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: MedicationAdministration resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: MedicationAdministration
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /MedicationDispense:
+    get:
+      summary: Search MedicationDispense resources
+      description: Search MedicationDispense resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchMedicationDispense
+      tags:
+      - MedicationDispense
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: claim
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: context
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: dispenser
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: responsibleparty
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: whenhandedover
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of MedicationDispense resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /MedicationDispense/{id}:
+    get:
+      summary: Read a MedicationDispense by id
+      description: Read a single MedicationDispense resource by logical id.
+      operationId: p360ReadMedicationDispense
+      tags:
+      - MedicationDispense
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the MedicationDispense resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: MedicationDispense resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: MedicationDispense
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /MedicationOrder:
+    get:
+      summary: Search MedicationOrder resources
+      description: Search MedicationOrder resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchMedicationOrder
+      tags:
+      - MedicationOrder
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: datewritten
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: prescriber
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of MedicationOrder resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /MedicationOrder/{id}:
+    get:
+      summary: Read a MedicationOrder by id
+      description: Read a single MedicationOrder resource by logical id.
+      operationId: p360ReadMedicationOrder
+      tags:
+      - MedicationOrder
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the MedicationOrder resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: MedicationOrder resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: MedicationOrder
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /MedicationStatement:
+    get:
+      summary: Search MedicationStatement resources
+      description: Search MedicationStatement resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchMedicationStatement
+      tags:
+      - MedicationStatement
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: context
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: effectivedate
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of MedicationStatement resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /MedicationStatement/{id}:
+    get:
+      summary: Read a MedicationStatement by id
+      description: Read a single MedicationStatement resource by logical id.
+      operationId: p360ReadMedicationStatement
+      tags:
+      - MedicationStatement
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the MedicationStatement resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: MedicationStatement resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: MedicationStatement
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Observation:
+    get:
+      summary: Search Observation resources
+      description: Search Observation resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a
+        SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchObservation
+      tags:
+      - Observation
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: document-date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: document-type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: performer
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Observation resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Observation/{id}:
+    get:
+      summary: Read a Observation by id
+      description: Read a single Observation resource by logical id.
+      operationId: p360ReadObservation
+      tags:
+      - Observation
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Observation resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Observation resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Observation
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /OperationDefinition:
+    get:
+      summary: Search OperationDefinition resources
+      description: Search OperationDefinition resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchOperationDefinition
+      tags:
+      - OperationDefinition
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: url
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of OperationDefinition resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /OperationDefinition/{id}:
+    get:
+      summary: Read a OperationDefinition by id
+      description: Read a single OperationDefinition resource by logical id.
+      operationId: p360ReadOperationDefinition
+      tags:
+      - OperationDefinition
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the OperationDefinition resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OperationDefinition resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: OperationDefinition
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Organization:
+    get:
+      summary: Search Organization resources
+      description: Search Organization resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a
+        SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchOrganization
+      tags:
+      - Organization
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Organization resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Organization/{id}:
+    get:
+      summary: Read a Organization by id
+      description: Read a single Organization resource by logical id.
+      operationId: p360ReadOrganization
+      tags:
+      - Organization
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Organization resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Organization resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Organization
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Patient:
+    get:
+      summary: Search Patient resources
+      description: Search Patient resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchPatient
+      tags:
+      - Patient
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-city
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-country
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-postalcode
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-state
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: age
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: birthdate
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: ethnicity
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: family
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: gender
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: given
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: language
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: race
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: telecom
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Patient resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Patient/{id}:
+    get:
+      summary: Read a Patient by id
+      description: Read a single Patient resource by logical id.
+      operationId: p360ReadPatient
+      tags:
+      - Patient
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Patient resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Patient resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Patient
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Person:
+    get:
+      summary: Search Person resources
+      description: Search Person resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchPerson
+      tags:
+      - Person
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-city
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-country
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-postalcode
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-state
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: birthdate
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: gender
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: link
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: relatedpatient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: telecom
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Person resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Person/{id}:
+    get:
+      summary: Read a Person by id
+      description: Read a single Person resource by logical id.
+      operationId: p360ReadPerson
+      tags:
+      - Person
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Person resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Person resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Person
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Practitioner:
+    get:
+      summary: Search Practitioner resources
+      description: Search Practitioner resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a
+        SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchPractitioner
+      tags:
+      - Practitioner
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-city
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-country
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-postalcode
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-state
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: birthdate
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: communication
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: family
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: gender
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: given
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: language
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: role
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: telecom
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Practitioner resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Practitioner/{id}:
+    get:
+      summary: Read a Practitioner by id
+      description: Read a single Practitioner resource by logical id.
+      operationId: p360ReadPractitioner
+      tags:
+      - Practitioner
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Practitioner resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Practitioner resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Practitioner
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Procedure:
+    get:
+      summary: Search Procedure resources
+      description: Search Procedure resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchProcedure
+      tags:
+      - Procedure
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: claim
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: performer
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Procedure resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Procedure/{id}:
+    get:
+      summary: Read a Procedure by id
+      description: Read a single Procedure resource by logical id.
+      operationId: p360ReadProcedure
+      tags:
+      - Procedure
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Procedure resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Procedure resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Procedure
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /ProcedureRequest:
+    get:
+      summary: Search ProcedureRequest resources
+      description: Search ProcedureRequest resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchProcedureRequest
+      tags:
+      - ProcedureRequest
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: body-site
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: ordered-on
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: orderer
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: priority
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: scheduled
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of ProcedureRequest resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /ProcedureRequest/{id}:
+    get:
+      summary: Read a ProcedureRequest by id
+      description: Read a single ProcedureRequest resource by logical id.
+      operationId: p360ReadProcedureRequest
+      tags:
+      - ProcedureRequest
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the ProcedureRequest resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ProcedureRequest resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: ProcedureRequest
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Provenance:
+    get:
+      summary: Search Provenance resources
+      description: Search Provenance resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchProvenance
+      tags:
+      - Provenance
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: target
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Provenance resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Provenance/{id}:
+    get:
+      summary: Read a Provenance by id
+      description: Read a single Provenance resource by logical id.
+      operationId: p360ReadProvenance
+      tags:
+      - Provenance
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Provenance resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Provenance resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Provenance
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /ReferralRequest:
+    get:
+      summary: Search ReferralRequest resources
+      description: Search ReferralRequest resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchReferralRequest
+      tags:
+      - ReferralRequest
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: recipient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: requester
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: specialty
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of ReferralRequest resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /ReferralRequest/{id}:
+    get:
+      summary: Read a ReferralRequest by id
+      description: Read a single ReferralRequest resource by logical id.
+      operationId: p360ReadReferralRequest
+      tags:
+      - ReferralRequest
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the ReferralRequest resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ReferralRequest resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: ReferralRequest
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /RelatedPerson:
+    get:
+      summary: Search RelatedPerson resources
+      description: Search RelatedPerson resources on the Anthem Patient360 member FHIR server (DSTU2). Requires
+        a SMART on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchRelatedPerson
+      tags:
+      - RelatedPerson
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-city
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-country
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-postalcode
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: address-state
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: birthdate
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: gender
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: telecom
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of RelatedPerson resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /RelatedPerson/{id}:
+    get:
+      summary: Read a RelatedPerson by id
+      description: Read a single RelatedPerson resource by logical id.
+      operationId: p360ReadRelatedPerson
+      tags:
+      - RelatedPerson
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the RelatedPerson resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: RelatedPerson resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: RelatedPerson
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /Specimen:
+    get:
+      summary: Search Specimen resources
+      description: Search Specimen resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchSpecimen
+      tags:
+      - Specimen
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _source
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: bodysite
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: encounter
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: identifier
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: patient
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: provenance-agent
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: subject
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of Specimen resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /Specimen/{id}:
+    get:
+      summary: Read a Specimen by id
+      description: Read a single Specimen resource by logical id.
+      operationId: p360ReadSpecimen
+      tags:
+      - Specimen
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the Specimen resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Specimen resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: Specimen
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+  /ValueSet:
+    get:
+      summary: Search ValueSet resources
+      description: Search ValueSet resources on the Anthem Patient360 member FHIR server (DSTU2). Requires a SMART
+        on FHIR access token carrying the matching patient/* scope.
+      operationId: p360SearchValueSet
+      tags:
+      - ValueSet
+      parameters:
+      - name: _count
+        in: query
+        required: false
+        description: Number of resources to return per page.
+        schema:
+          type: integer
+      - name: _id
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: _lastUpdated
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: reference-concept
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: false
+        description: FHIR search parameter declared for this resource in the server Conformance statement.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Bundle of ValueSet resources
+          content:
+            application/json+fhir:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /ValueSet/{id}:
+    get:
+      summary: Read a ValueSet by id
+      description: Read a single ValueSet resource by logical id.
+      operationId: p360ReadValueSet
+      tags:
+      - ValueSet
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Logical id of the ValueSet resource.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ValueSet resource
+          content:
+            application/json+fhir:
+              schema:
+                type: object
+                title: ValueSet
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not found
+components:
+  securitySchemes:
+    smartOnFhir:
+      type: oauth2
+      description: SMART on FHIR authorization, as declared by the server security extension http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://patient360c.anthem.com/P360Member/identityserver/connect/authorize
+          tokenUrl: https://patient360c.anthem.com/P360Member/identityserver/connect/token
+          refreshUrl: https://patient360c.anthem.com/P360Member/identityserver/connect/token
+          scopes:
+            patient/Account.read: Read access to the Account resource for the authorized patient.
+            patient/AllergyIntolerance.read: Read access to the AllergyIntolerance resource for the authorized patient.
+            patient/Appointment.read: Read access to the Appointment resource for the authorized patient.
+            patient/AppointmentResponse.read: Read access to the AppointmentResponse resource for the authorized
+              patient.
+            patient/AuditEvent.read: Read access to the AuditEvent resource for the authorized patient.
+            patient/Basic.read: Read access to the Basic resource for the authorized patient.
+            patient/Binary.read: Read access to the Binary resource for the authorized patient.
+            patient/BodySite.read: Read access to the BodySite resource for the authorized patient.
+            patient/Bundle.read: Read access to the Bundle resource for the authorized patient.
+            patient/CarePlan.read: Read access to the CarePlan resource for the authorized patient.
+            patient/Claim.read: Read access to the Claim resource for the authorized patient.
+            patient/ClaimResponse.read: Read access to the ClaimResponse resource for the authorized patient.
+            patient/ClinicalImpression.read: Read access to the ClinicalImpression resource for the authorized patient.
+            patient/Communication.read: Read access to the Communication resource for the authorized patient.
+            patient/CommunicationRequest.read: Read access to the CommunicationRequest resource for the authorized
+              patient.
+            patient/Composition.read: Read access to the Composition resource for the authorized patient.
+            patient/ConceptMap.read: Read access to the ConceptMap resource for the authorized patient.
+            patient/Condition.read: Read access to the Condition resource for the authorized patient.
+            patient/Conformance.read: Read access to the Conformance resource for the authorized patient.
+            patient/Contract.read: Read access to the Contract resource for the authorized patient.
+            patient/Coverage.read: Read access to the Coverage resource for the authorized patient.
+            patient/DataElement.read: Read access to the DataElement resource for the authorized patient.
+            patient/DetectedIssue.read: Read access to the DetectedIssue resource for the authorized patient.
+            patient/Device.read: Read access to the Device resource for the authorized patient.
+            patient/DeviceComponent.read: Read access to the DeviceComponent resource for the authorized patient.
+            patient/DeviceMetric.read: Read access to the DeviceMetric resource for the authorized patient.
+            patient/DeviceUseRequest.read: Read access to the DeviceUseRequest resource for the authorized patient.
+            patient/DeviceUseStatement.read: Read access to the DeviceUseStatement resource for the authorized patient.
+            patient/DiagnosticOrder.read: Read access to the DiagnosticOrder resource for the authorized patient.
+            patient/DiagnosticReport.read: Read access to the DiagnosticReport resource for the authorized patient.
+            patient/DocumentManifest.read: Read access to the DocumentManifest resource for the authorized patient.
+            patient/DocumentReference.read: Read access to the DocumentReference resource for the authorized patient.
+            patient/DomainResource.read: Read access to the DomainResource resource for the authorized patient.
+            patient/EligibilityRequest.read: Read access to the EligibilityRequest resource for the authorized patient.
+            patient/EligibilityResponse.read: Read access to the EligibilityResponse resource for the authorized
+              patient.
+            patient/Encounter.read: Read access to the Encounter resource for the authorized patient.
+            patient/EnrollmentRequest.read: Read access to the EnrollmentRequest resource for the authorized patient.
+            patient/EnrollmentResponse.read: Read access to the EnrollmentResponse resource for the authorized patient.
+            patient/EpisodeOfCare.read: Read access to the EpisodeOfCare resource for the authorized patient.
+            patient/ExplanationOfBenefit.read: Read access to the ExplanationOfBenefit resource for the authorized
+              patient.
+            patient/FamilyMemberHistory.read: Read access to the FamilyMemberHistory resource for the authorized
+              patient.
+            patient/Flag.read: Read access to the Flag resource for the authorized patient.
+            patient/Goal.read: Read access to the Goal resource for the authorized patient.
+            patient/Group.read: Read access to the Group resource for the authorized patient.
+            patient/HealthcareService.read: Read access to the HealthcareService resource for the authorized patient.
+            patient/ImagingObjectSelection.read: Read access to the ImagingObjectSelection resource for the authorized
+              patient.
+            patient/ImagingStudy.read: Read access to the ImagingStudy resource for the authorized patient.
+            patient/Immunization.read: Read access to the Immunization resource for the authorized patient.
+            patient/ImmunizationRecommendation.read: Read access to the ImmunizationRecommendation resource for
+              the authorized patient.
+            patient/ImplementationGuide.read: Read access to the ImplementationGuide resource for the authorized
+              patient.
+            patient/List.read: Read access to the List resource for the authorized patient.
+            patient/Location.read: Read access to the Location resource for the authorized patient.
+            patient/Media.read: Read access to the Media resource for the authorized patient.
+            patient/Medication.read: Read access to the Medication resource for the authorized patient.
+            patient/MedicationAdministration.read: Read access to the MedicationAdministration resource for the
+              authorized patient.
+            patient/MedicationDispense.read: Read access to the MedicationDispense resource for the authorized patient.
+            patient/MedicationOrder.read: Read access to the MedicationOrder resource for the authorized patient.
+            patient/MedicationStatement.read: Read access to the MedicationStatement resource for the authorized
+              patient.
+            patient/MessageHeader.read: Read access to the MessageHeader resource for the authorized patient.
+            patient/NamingSystem.read: Read access to the NamingSystem resource for the authorized patient.
+            patient/NutritionOrder.read: Read access to the NutritionOrder resource for the authorized patient.
+            patient/Observation.read: Read access to the Observation resource for the authorized patient.
+            patient/OperationDefinition.read: Read access to the OperationDefinition resource for the authorized
+              patient.
+            patient/OperationOutcome.read: Read access to the OperationOutcome resource for the authorized patient.
+            patient/Order.read: Read access to the Order resource for the authorized patient.
+            patient/OrderResponse.read: Read access to the OrderResponse resource for the authorized patient.
+            patient/Organization.read: Read access to the Organization resource for the authorized patient.
+            patient/Parameters.read: Read access to the Parameters resource for the authorized patient.
+            patient/Patient.read: Read access to the Patient resource for the authorized patient.
+            patient/PaymentNotice.read: Read access to the PaymentNotice resource for the authorized patient.
+            patient/PaymentReconciliation.read: Read access to the PaymentReconciliation resource for the authorized
+              patient.
+            patient/Person.read: Read access to the Person resource for the authorized patient.
+            patient/Practitioner.read: Read access to the Practitioner resource for the authorized patient.
+            patient/Procedure.read: Read access to the Procedure resource for the authorized patient.
+            patient/ProcedureRequest.read: Read access to the ProcedureRequest resource for the authorized patient.
+            patient/ProcessRequest.read: Read access to the ProcessRequest resource for the authorized patient.
+            patient/ProcessResponse.read: Read access to the ProcessResponse resource for the authorized patient.
+            patient/Provenance.read: Read access to the Provenance resource for the authorized patient.
+            patient/Questionnaire.read: Read access to the Questionnaire resource for the authorized patient.
+            patient/QuestionnaireResponse.read: Read access to the QuestionnaireResponse resource for the authorized
+              patient.
+            patient/ReferralRequest.read: Read access to the ReferralRequest resource for the authorized patient.
+            patient/RelatedPerson.read: Read access to the RelatedPerson resource for the authorized patient.
+            patient/Resource.read: Read access to the Resource resource for the authorized patient.
+            patient/RiskAssessment.read: Read access to the RiskAssessment resource for the authorized patient.
+            patient/Schedule.read: Read access to the Schedule resource for the authorized patient.
+            patient/SearchParameter.read: Read access to the SearchParameter resource for the authorized patient.
+            patient/Slot.read: Read access to the Slot resource for the authorized patient.
+            patient/Specimen.read: Read access to the Specimen resource for the authorized patient.
+            patient/StructureDefinition.read: Read access to the StructureDefinition resource for the authorized
+              patient.
+            patient/Subscription.read: Read access to the Subscription resource for the authorized patient.
+            patient/Substance.read: Read access to the Substance resource for the authorized patient.
+            patient/SupplyDelivery.read: Read access to the SupplyDelivery resource for the authorized patient.
+            patient/SupplyRequest.read: Read access to the SupplyRequest resource for the authorized patient.
+            patient/TestScript.read: Read access to the TestScript resource for the authorized patient.
+            patient/ValueSet.read: Read access to the ValueSet resource for the authorized patient.
+            patient/VisionPrescription.read: Read access to the VisionPrescription resource for the authorized patient.
+            patient/ActivityDefinition.read: Read access to the ActivityDefinition resource for the authorized patient.
+            patient/AdverseEvent.read: Read access to the AdverseEvent resource for the authorized patient.
+            patient/BiologicallyDerivedProduct.read: Read access to the BiologicallyDerivedProduct resource for
+              the authorized patient.
+            patient/BodyStructure.read: Read access to the BodyStructure resource for the authorized patient.
+            patient/CapabilityStatement.read: Read access to the CapabilityStatement resource for the authorized
+              patient.
+            patient/CareTeam.read: Read access to the CareTeam resource for the authorized patient.
+            patient/CatalogEntry.read: Read access to the CatalogEntry resource for the authorized patient.
+            patient/ChargeItem.read: Read access to the ChargeItem resource for the authorized patient.
+            patient/ChargeItemDefinition.read: Read access to the ChargeItemDefinition resource for the authorized
+              patient.
+            patient/CodeSystem.read: Read access to the CodeSystem resource for the authorized patient.
+            patient/CompartmentDefinition.read: Read access to the CompartmentDefinition resource for the authorized
+              patient.
+            patient/Consent.read: Read access to the Consent resource for the authorized patient.
+            patient/CoverageEligibilityRequest.read: Read access to the CoverageEligibilityRequest resource for
+              the authorized patient.
+            patient/CoverageEligibilityResponse.read: Read access to the CoverageEligibilityResponse resource for
+              the authorized patient.
+            patient/DeviceDefinition.read: Read access to the DeviceDefinition resource for the authorized patient.
+            patient/DeviceRequest.read: Read access to the DeviceRequest resource for the authorized patient.
+            patient/EffectEvidenceSynthesis.read: Read access to the EffectEvidenceSynthesis resource for the authorized
+              patient.
+            patient/Endpoint.read: Read access to the Endpoint resource for the authorized patient.
+            patient/EventDefinition.read: Read access to the EventDefinition resource for the authorized patient.
+            patient/Evidence.read: Read access to the Evidence resource for the authorized patient.
+            patient/EvidenceVariable.read: Read access to the EvidenceVariable resource for the authorized patient.
+            patient/ExampleScenario.read: Read access to the ExampleScenario resource for the authorized patient.
+            patient/GraphDefinition.read: Read access to the GraphDefinition resource for the authorized patient.
+            patient/GuidanceResponse.read: Read access to the GuidanceResponse resource for the authorized patient.
+            patient/ImmunizationEvaluation.read: Read access to the ImmunizationEvaluation resource for the authorized
+              patient.
+            patient/InsurancePlan.read: Read access to the InsurancePlan resource for the authorized patient.
+            patient/Invoice.read: Read access to the Invoice resource for the authorized patient.
+            patient/Library.read: Read access to the Library resource for the authorized patient.
+            patient/Linkage.read: Read access to the Linkage resource for the authorized patient.
+            patient/Measure.read: Read access to the Measure resource for the authorized patient.
+            patient/MeasureReport.read: Read access to the MeasureReport resource for the authorized patient.
+            patient/MedicationKnowledge.read: Read access to the MedicationKnowledge resource for the authorized
+              patient.
+            patient/MedicationRequest.read: Read access to the MedicationRequest resource for the authorized patient.
+            patient/MedicinalProduct.read: Read access to the MedicinalProduct resource for the authorized patient.
+            patient/MedicinalProductAuthorization.read: Read access to the MedicinalProductAuthorization resource
+              for the authorized patient.
+            patient/MedicinalProductContraindication.read: Read access to the MedicinalProductContraindication resource
+              for the authorized patient.
+            patient/MedicinalProductIndication.read: Read access to the MedicinalProductIndication resource for
+              the authorized patient.
+            patient/MedicinalProductIngredient.read: Read access to the MedicinalProductIngredient resource for
+              the authorized patient.
+            patient/MedicinalProductInteraction.read: Read access to the MedicinalProductInteraction resource for
+              the authorized patient.
+            patient/MedicinalProductManufactured.read: Read access to the MedicinalProductManufactured resource
+              for the authorized patient.
+            patient/MedicinalProductPackaged.read: Read access to the MedicinalProductPackaged resource for the
+              authorized patient.
+            patient/MedicinalProductPharmaceutical.read: Read access to the MedicinalProductPharmaceutical resource
+              for the authorized patient.
+            patient/MedicinalProductUndesirableEffect.read: Read access to the MedicinalProductUndesirableEffect
+              resource for the authorized patient.
+            patient/MessageDefinition.read: Read access to the MessageDefinition resource for the authorized patient.
+            patient/MolecularSequence.read: Read access to the MolecularSequence resource for the authorized patient.
+            patient/ObservationDefinition.read: Read access to the ObservationDefinition resource for the authorized
+              patient.
+            patient/OrganizationAffiliation.read: Read access to the OrganizationAffiliation resource for the authorized
+              patient.
+            patient/PlanDefinition.read: Read access to the PlanDefinition resource for the authorized patient.
+            patient/PractitionerRole.read: Read access to the PractitionerRole resource for the authorized patient.
+            patient/RequestGroup.read: Read access to the RequestGroup resource for the authorized patient.
+            patient/ResearchDefinition.read: Read access to the ResearchDefinition resource for the authorized patient.
+            patient/ResearchElementDefinition.read: Read access to the ResearchElementDefinition resource for the
+              authorized patient.
+            patient/ResearchStudy.read: Read access to the ResearchStudy resource for the authorized patient.
+            patient/ResearchSubject.read: Read access to the ResearchSubject resource for the authorized patient.
+            patient/RiskEvidenceSynthesis.read: Read access to the RiskEvidenceSynthesis resource for the authorized
+              patient.
+            patient/ServiceRequest.read: Read access to the ServiceRequest resource for the authorized patient.
+            patient/SpecimenDefinition.read: Read access to the SpecimenDefinition resource for the authorized patient.
+            patient/StructureMap.read: Read access to the StructureMap resource for the authorized patient.
+            patient/SubstanceNucleicAcid.read: Read access to the SubstanceNucleicAcid resource for the authorized
+              patient.
+            patient/SubstancePolymer.read: Read access to the SubstancePolymer resource for the authorized patient.
+            patient/SubstanceProtein.read: Read access to the SubstanceProtein resource for the authorized patient.
+            patient/SubstanceReferenceInformation.read: Read access to the SubstanceReferenceInformation resource
+              for the authorized patient.
+            patient/SubstanceSourceMaterial.read: Read access to the SubstanceSourceMaterial resource for the authorized
+              patient.
+            patient/SubstanceSpecification.read: Read access to the SubstanceSpecification resource for the authorized
+              patient.
+            patient/Task.read: Read access to the Task resource for the authorized patient.
+            patient/TerminologyCapabilities.read: Read access to the TerminologyCapabilities resource for the authorized
+              patient.
+            patient/TestReport.read: Read access to the TestReport resource for the authorized patient.
+            patient/VerificationResult.read: Read access to the VerificationResult resource for the authorized patient.
+            patient/ExpansionProfile.read: Read access to the ExpansionProfile resource for the authorized patient.
+            patient/ImagingManifest.read: Read access to the ImagingManifest resource for the authorized patient.
+            patient/Sequence.read: Read access to the Sequence resource for the authorized patient.
+            patient/ServiceDefinition.read: Read access to the ServiceDefinition resource for the authorized patient.
+            patient/*.read: Read access to the * resource for the authorized patient.
+  schemas:
+    Bundle:
+      type: object
+      title: FHIR Bundle
+      description: FHIR DSTU2 Bundle.
+      properties:
+        resourceType:
+          type: string
+        type:
+          type: string
+        total:
+          type: integer
+        link:
+          type: array
+          items:
+            type: object
+        entry:
+          type: array
+          items:
+            type: object
+    OperationOutcome:
+      type: object
+      title: FHIR OperationOutcome
+      properties:
+        resourceType:
+          type: string
+        issue:
+          type: array
+          items:
+            type: object
+  responses:
+    Unauthorized:
+      description: Missing, expired or insufficiently scoped SMART on FHIR access token.
+      content:
+        application/json+fhir:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'

@@ -4,49 +4,46 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Anthem
 providerId: anthem
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
+modified: '2026-09-02'
+generated: '2026-09-02'
+method: searched
+source: https://www.anthem.com/developers
+sources:
+  - https://www.anthem.com/developers
+  - https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+reconciled: true
+plan_count: 0
 tags:
   - FHIR
   - Health Insurance
   - Healthcare
   - Interoperability
   - Patient Access
-description: Anthem (operating as Elevance Health) publishes FHIR R4 Patient Access, Provider Directory,
-  and Drug Formulary APIs as required by the CMS Interoperability and Patient Access Final Rule (CMS-9115-F).
-  These regulatory APIs are offered at no cost to members and authorized third-party applications. Anthem
-  does not publish a commercial API plans/pricing page. Use is governed by SMART on FHIR member authorization
-  for Patient Access endpoints, while Provider Directory is publicly accessible.
-notes: No commercial pricing tiers are published. Anthem's developer APIs are regulator-mandated and free
-  for compliant use. Replace with documented values if Anthem publishes a developer plans page.
-sources:
-  - https://www.anthem.com/developer/
-plans:
-  - id: anthem-regulatory-access
-    name: Regulatory Access (CMS-9115-F)
-    type: freemium
-    description: Free access to Anthem's CMS-mandated FHIR APIs. Patient Access requires member authorization
-      via SMART on FHIR; Provider Directory is publicly available.
-    entries:
-      - label: API Requests
-        name: api_requests
-        type: quota
-        metric: request
-        limit: -1
-        timeFrame: month
-        geo: US
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-    elements:
-      - name: Anthem Patient Access API
-      - name: Anthem Provider Directory API
-      - name: Anthem Drug Formulary API
-      - name: SMART on FHIR Authorization
-      - name: Public Documentation
+description: >-
+  Anthem publishes NO API plans, no pricing page and no tiers. Its three developer APIs — Patient Access,
+  Provider Directory and Drug Formulary — exist because the CMS Interoperability and Patient Access Final
+  Rule (CMS-9115-F) requires them, and Anthem's own Interoperability API Endpoint Support Document (IO105
+  v15.0, effective 2025-11-18) describes access purely in terms of registration forms, member consent and
+  credentials issued by secure email. No price, quota, overage or metered unit appears anywhere on the
+  developer portal or in the endpoint support document. Access is therefore free-at-point-of-use but not
+  self-serve: production access requires an approval that Anthem says "can take several weeks", and Patient
+  Access additionally requires member consent with a token valid for 90 days.
+notes: >-
+  plan_count is 0 because Anthem publishes no plan, not because a plan was not found. Previous rounds of
+  this file asserted a synthetic "Regulatory Access" tier with an unlimited monthly quota at $0.00; that was
+  a bulk-sweep generation, not something Anthem published, and it has been removed. The only self-serve
+  entry point Anthem offers is the Patient Access sandbox (synthetic data) — see
+  sandbox/anthem-sandbox.yml.
+plans: []
+access:
+  cost_to_developer: none published
+  self_serve: false
+  gated_by:
+    - Patient Access API Production Environment request form (https://www.anthem.com/developers/request-anthem-io)
+    - Provider Directory API Production Environment request form (https://www.anthem.com/developers/provider-directory-api-request)
+    - Formulary API Production Environment request form (developer portal)
+    - Member consent, for Patient Access
+  approval_lead_time: several weeks (Anthem's own wording)
 maintainers:
   - FN: Kin Lane
     email: info@apievangelist.com

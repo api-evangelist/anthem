@@ -4,47 +4,53 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Anthem
 providerId: anthem
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
+modified: '2026-09-02'
+generated: '2026-09-02'
+method: searched
+source: https://www.anthem.com/developers
+sources:
+  - https://www.anthem.com/developers
+  - https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+reconciled: true
+limit_count: 0
 tags:
   - Rate Limiting
   - FHIR
   - Healthcare
   - Interoperability
-description: Anthem does not publish numeric rate limits for its CMS-mandated FHIR APIs. Limits are applied
-  per registered application/client and may be raised through developer support. Public Provider Directory
-  endpoints may have separate per-IP throttling. Replace with documented values when published.
-notes: No public per-second/per-minute numbers documented. Behavior is inferred from typical CMS-9115-F
-  payer FHIR implementations.
-sources:
-  - https://www.anthem.com/developer/
-responseCodes:
-  throttled: 429
-  serviceUnavailable: 503
-limits:
-  - name: Per-application throttling
-    scope: application
-    metric: varies
-    limit: see provider developer support
-    notes: Numeric limits are not published; raise requests via Anthem developer support.
-  - name: Public Provider Directory throttling
-    scope: IP
-    metric: varies
-    limit: see provider developer support
-    notes: Public, unauthenticated traffic to the FHIR Provider Directory is subject to per-IP throttling
-      to protect shared infrastructure.
+description: >-
+  Anthem publishes no rate limits. The developer portal says nothing about throttling and the
+  Interoperability API Endpoint Support Document (IO105 v15.0) — which is otherwise the most detailed
+  technical document Anthem publishes, down to per-resource search parameters — contains no limit, window,
+  burst, quota or backoff guidance of any kind.
+notes: >-
+  limit_count is an honest zero: nothing is documented and nothing was observable. Earlier rounds of this
+  file asserted per-application and per-IP throttling with 429/503 response codes; that was inferred from
+  "typical CMS-9115-F payer implementations", not read from Anthem, and it has been removed rather than
+  restated. A consumer sizing an integration against Anthem has no published number to plan against and
+  must ask interoperabilityworkgroup@anthem.com.
+responseHeaders: []
+responseHeaders_note: >-
+  PROBED 2026-09-02 against
+  https://totalview.healthos.elevancehealth.com/resources/unregistered/api/v1/fhir/cms_mandate/mcd/metadata
+  (HTTP 200) and https://patient360c.anthem.com/P360Member/api/fhir/metadata (HTTP 200). Neither response
+  carried X-RateLimit-*, RateLimit-*, Retry-After or any other quota signal, so an agent has no runtime
+  signal to back off against.
+responseCodes: {}
+responseCodes_note: >-
+  No exhaustion status code is documented. Note that this platform returns HTTP 500 for authorization
+  failures (see errors/anthem-problem-types.yml), so a 500 here cannot safely be read as throttling either.
+limits: []
 policies:
-  - name: Backoff Strategy
-    description: Implement exponential backoff with jitter and honor the Retry-After header when present.
-  - name: SMART on FHIR Scoping
-    description: Patient Access requests must carry a valid SMART on FHIR token; tokens scoped narrowly
-      reduce throttling exposure on shared resource types.
-  - name: Raise via Support
-    description: Production volume needs are negotiated through Anthem developer support; there is no
-      self-service tier upgrade.
+  - name: Ask before you scale
+    description: >-
+      Production volume is negotiated through the registration form and Anthem developer support; there is
+      no self-service tier and no published ceiling. Contact interoperabilityworkgroup@anthem.com.
+  - name: Defensive backoff
+    description: >-
+      With no published limit and no Retry-After header, a client should implement exponential backoff with
+      jitter on its own initiative — but must not treat this platform's 500 as transient, because an
+      unauthenticated caller receives it indefinitely.
 maintainers:
   - FN: Kin Lane
     email: info@apievangelist.com

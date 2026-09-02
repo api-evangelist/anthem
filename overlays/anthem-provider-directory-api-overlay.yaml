@@ -1,0 +1,63 @@
+overlay: 1.0.0
+info:
+  title: Anthem Provider Directory API — API Evangelist enhancements
+  version: 1.0.0
+extends: openapi/anthem-provider-directory-api-openapi.yml
+x-generated: '2026-09-02'
+x-method: generated
+x-source: >-
+  Enhancements the API Evangelist pipeline adds on top of the contract derived from Anthem's live
+  CapabilityStatement. Nothing here changes what Anthem serves; it records what a caller must know and
+  Anthem does not state.
+actions:
+  - target: $.info
+    update:
+      x-provider: Anthem (Elevance Health)
+      x-regulatory-basis: CMS Interoperability and Patient Access Final Rule (CMS-9115-F)
+      x-implementation-guides:
+        - Da Vinci PDEX Plan Net 1.1.0
+        - HL7 FHIR US Core STU 3.1.1
+      x-support-document: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+      x-onboarding: >-
+        Production credentials are issued by secure email after the Provider Directory API Production
+        Environment request form is approved. There is no self-service key.
+  - target: $.info
+    update:
+      x-observed-behaviour:
+        probed: '2026-09-02'
+        finding: >-
+          Anonymous requests to every resource path return HTTP 500 with a bespoke JSON envelope rather than
+          401 with a WWW-Authenticate challenge. Unknown resource types and unknown ids return the identical
+          body. Treat 500 from this host as "not authorized" until proven otherwise.
+  - target: $.paths['/metadata'].get
+    update:
+      x-anonymous: true
+      x-note: The only operation on this API callable without credentials.
+  - target: $.paths['/InsurancePlan'].get
+    update:
+      x-coverage-area-note: >-
+        Anthem's endpoint support document searches coverage-area by two-letter US state abbreviation.
+      x-anticipated-queries:
+        - 'InsurancePlan?type=http://hl7.org/fhir/us/davinci-pdex-plannet/CodeSystem/InsuranceProductTypeCS|'
+        - 'InsurancePlan?coverage-type=http://terminology.hl7.org/CodeSystem/v3-ActCode|DRUGPOL'
+  - target: $.paths['/PractitionerRole'].get
+    update:
+      x-include-chains:
+        - PractitionerRole:practitioner
+        - PractitionerRole:organization
+        - PractitionerRole:location
+        - PractitionerRole:service
+        - PractitionerRole:network
+  - target: $.paths['/OrganizationAffiliation'].get
+    update:
+      x-include-chains:
+        - OrganizationAffiliation:primary-organization
+        - OrganizationAffiliation:participating-organization
+        - OrganizationAffiliation:location
+        - OrganizationAffiliation:service
+        - OrganizationAffiliation:network
+  - target: $.paths['/HealthcareService'].get
+    update:
+      x-include-chains:
+        - HealthcareService:location
+        - HealthcareService:organization

@@ -1,0 +1,78 @@
+generated: '2026-09-02'
+method: searched
+source: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+docs: https://www.anthem.com/developers
+note: >-
+  Anthem publishes no API changelog, no deprecation policy, no SLA and no status page. What it does publish
+  is a VERSIONED CONTROLLED DOCUMENT — the Interoperability API Endpoint Support Document, IO105, currently
+  version 15.0 with an effective date of 2025-11-18 and status Active — which is the only dated artifact
+  that tracks endpoint change, and a regulator-set roadmap of three APIs due 1/1/27.
+versioning:
+  scheme: >-
+    None at the HTTP layer. Version is expressed by the FHIR release the server implements (R4 4.0.1 on the
+    CMS-mandate platform, DSTU2 1.0.2 on Patient360) and by the implementation-guide version each API
+    declares. The path segment /api/v1/ on the CMS-mandate base is a platform version, not an API version,
+    and there is no published v2.
+  current:
+    - api: Provider Directory
+      version: FHIR R4 4.0.1 / Da Vinci PDEX Plan Net 1.1.0
+    - api: Drug Formulary
+      version: FHIR R4 / Da Vinci PDEX US Drug Formulary 2.0.1 STU2
+    - api: Patient Access
+      version: FHIR R4 4.0.1 / CARIN BB STU 2.1.0 / US Core 6.1.0 / SMART App Launch 2.2.0
+    - api: Patient360 member FHIR
+      version: FHIR DSTU2 1.0.2 (HIEBus 32.11.4)
+  in_band_signal: false
+controlled_document:
+  id: IO105
+  title: Interoperability API Endpoints
+  version: '15.0'
+  effective_date: '2025-11-18'
+  status: Active
+  owner: Enterprise Data (EDA) / Interoperability Center of Excellence (IO CoE)
+  url: https://www.anthem.com/content/dam/digital/developers-portal/Anthem-IOProviderDirectoryAndFormulary-API-Documentation.pdf
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  deprecated_operations: []
+  note: >-
+    No RFC 8594 Sunset or Deprecation headers are documented and no deprecation policy page exists. The
+    clearest live deprecation signal is unstated: the Patient360 member server still serves FHIR DSTU2
+    (1.0.2), a release HL7 superseded in 2016, with no published migration date to the R4 surface.
+sla:
+  published: false
+  note: No uptime commitment, support-response target or SLA document is published for the developer APIs.
+status_page:
+  present: false
+  probe:
+    url: https://status.anthem.com/
+    status: '000'
+    note: Host does not resolve; no status page found on any Anthem or Elevance Health property.
+change_notification:
+  - name: API release notifications sign-up
+    url: https://www.anthem.com/developers/get-notifications
+    status: 200
+    note: >-
+      An email sign-up form, not a feed. There is no RSS/Atom feed, no dated changelog page and no
+      release-notes archive, so the only way to learn of a change is to have subscribed before it happened.
+roadmap:
+  source: 'IO105 v15.0 and the CMS-0057-F final rule'
+  committed:
+    - name: Payer to Payer API
+      due: '2027-01-01'
+      status: not-yet-implemented
+    - name: Prior Authorization API
+      due: '2027-01-01'
+      status: not-yet-implemented
+    - name: Provider Access API
+      due: '2027-01-01'
+      status: not-yet-implemented
+    - name: Prior authorization data added to the Patient Access API
+      due: '2027-01-01'
+      status: not-yet-implemented
+credential_lifecycle:
+  patient_access_token_validity_days: 90
+  note: >-
+    Patient Access production tokens are valid for 90 days; ongoing access requires renewed member consent.
+    Provider Directory and Formulary client credentials have no published rotation or expiry policy.
